@@ -307,7 +307,7 @@ Generate a Markdown document with these sections:
 
 Rules: Be specific, quantitative, past-tense action verbs. Start directly with H1.`;
 
-  const response = await ai.models.generateContent({ model: 'gemini-2.0-flash-exp', contents: prompt });
+  const response = await ai.models.generateContent({ model: 'gemini-2.5-flash', contents: prompt });
   return response.text;
 }
 
@@ -339,7 +339,7 @@ INSTRUCTIONS:
 
 Return ONLY the complete LaTeX source code, nothing else. No markdown fences, no explanation.`;
 
-  const response = await ai.models.generateContent({ model: 'gemini-2.0-flash-exp', contents: prompt });
+  const response = await ai.models.generateContent({ model: 'gemini-2.5-flash', contents: prompt });
   return response.text;
 }
 
@@ -363,7 +363,7 @@ Return a JSON array with one object per file in the same order:
 
 Scores are 0-100. Return ONLY the JSON array, no other text.`;
 
-  const response = await ai.models.generateContent({ model: 'gemini-2.0-flash-exp', contents: prompt });
+  const response = await ai.models.generateContent({ model: 'gemini-2.5-flash', contents: prompt });
   try {
     const text = response.text.trim().replace(/^```json\n?/, '').replace(/\n?```$/, '');
     return JSON.parse(text);
