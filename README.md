@@ -60,64 +60,32 @@ Visit `http://localhost:3000` and create your account!
 5. **Generate Resumes** - Paste job descriptions and get tailored LaTeX resumes
 6. **Download & Apply** - Compile LaTeX and apply to jobs!
 
-## 🔒 Security & Privacy
-
-- ✅ **Passwords encrypted** with bcrypt
-- ✅ **JWT authentication** with secure tokens
-- ✅ **Rate limiting** on auth endpoints
-- ✅ **API keys stored client-side** - never in database
-- ✅ **Data isolation** - users can only access their own data
-- ✅ **SQL injection protection** - parameterized queries
-
-## 🛠️ Tech Stack
-
-**Backend:**
-- Node.js + Express
-- SQLite (better-sqlite3)
-- JWT authentication
-- bcrypt password hashing
-
-**Frontend:**
-- Vanilla JavaScript
-- Tailwind CSS
-- Iconify icons
-
-**AI:**
-- Google Gemini 2.0 Flash (user-provided API keys)
-
-## 📚 Documentation
-
-- [Deployment Guide](./DEPLOYMENT_GUIDE.md) - Deploy to production
-- [Authentication Setup](./AUTH_SETUP.md) - User authentication details
-- [Session-Based API Keys](./SESSION_BASED_API_KEYS.md) - Security model
-- [How to Get API Key](./HOW_TO_GET_API_KEY.md) - Step-by-step guide
-- [Quick Reference](./QUICK_REFERENCE.md) - Quick commands and tips
-
 ## 🚀 Deployment
 
-### Deploy to Render (Recommended)
+### Deploy to Render (Recommended - Free)
 
 1. Fork this repository
 2. Create account on [Render](https://render.com)
-3. Create new Web Service
-4. Connect your GitHub repo
-5. Add environment variable: `JWT_SECRET` (32+ chars)
-6. Deploy!
+3. Create new Web Service → Connect your GitHub repo
+4. Add environment variable: `JWT_SECRET` (generate with command below)
+5. Deploy!
+
+**Generate JWT Secret:**
+```bash
+node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
+```
 
 See [DEPLOYMENT_GUIDE.md](./DEPLOYMENT_GUIDE.md) for detailed instructions.
 
 ### Other Platforms
-
 - Railway
-- Heroku
+- Heroku  
 - Vercel
 - Any Node.js hosting
 
 ## 🔧 Configuration
 
-### Environment Variables
-
-Create `.env` file:
+Create `.env` file (don't commit this):
 
 ```env
 JWT_SECRET=your-secure-32-char-secret
@@ -125,103 +93,43 @@ PORT=3000
 NODE_ENV=production
 ```
 
-Generate JWT secret:
-```bash
-node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
-```
+## 🛠️ Tech Stack
 
-### Scripts
+**Backend:** Node.js, Express, SQLite, JWT, bcrypt  
+**Frontend:** Vanilla JavaScript, Tailwind CSS  
+**AI:** Google Gemini 2.0 Flash (user-provided API keys)
 
-```bash
-npm start              # Start server
-npm run dev            # Development mode
-npm run reset-db       # Reset database
-npm run migrate        # Migrate existing data
-```
+## 🔒 Security
 
-## 📊 Features in Detail
+- ✅ Passwords encrypted with bcrypt
+- ✅ JWT authentication with secure tokens
+- ✅ Rate limiting on auth endpoints
+- ✅ API keys stored client-side only (never in database)
+- ✅ Data isolation per user
+- ✅ SQL injection protection
 
-### GitHub Repository Analysis
-- Fetches repo metadata, languages, and structure
-- Analyzes README and config files
-- Generates comprehensive project summaries
-- Auto-extracts relevant tags and technologies
+## 📚 Documentation
 
-### Smart Resume Generation
-- Analyzes job descriptions
-- Scores your projects for relevance
-- Selects best-matching experiences
-- Generates tailored LaTeX resumes
-- Uses action verbs and quantifiable achievements
-
-### Template System
-- Default Jake's Resume template included
-- Upload custom LaTeX templates
-- Set default template per user
-- Global templates for all users
-
-### Library Management
-- Store projects and experiences
-- Tag and categorize items
-- Search and filter
-- Edit and update anytime
+- [DEPLOYMENT_GUIDE.md](./DEPLOYMENT_GUIDE.md) - Complete deployment instructions
+- [HOW_TO_GET_API_KEY.md](./HOW_TO_GET_API_KEY.md) - Step-by-step API key guide
 
 ## 🤝 Contributing
 
-Contributions welcome! Please:
-
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Test thoroughly
-5. Submit a pull request
+Contributions welcome! Fork the repo, make changes, and submit a pull request.
 
 ## 📝 License
 
-MIT License - see [LICENSE](LICENSE) file
+MIT License
 
 ## 🙏 Acknowledgments
 
 - [Jake's Resume](https://github.com/jakegut/resume) - Default LaTeX template
 - [Google Gemini](https://ai.google.dev/) - AI model
 - [Tailwind CSS](https://tailwindcss.com/) - Styling
-- [Iconify](https://iconify.design/) - Icons
 
 ## 📧 Support
 
 - **Issues:** [GitHub Issues](https://github.com/AnshulRoy28/Resume_Forge/issues)
-- **Discussions:** [GitHub Discussions](https://github.com/AnshulRoy28/Resume_Forge/discussions)
-
-## 🌟 Star History
-
-If you find this project helpful, please give it a star! ⭐
-
-## 📈 Roadmap
-
-- [ ] Multiple AI provider support (OpenAI, Anthropic)
-- [ ] PDF preview in browser
-- [ ] Resume templates marketplace
-- [ ] Team/organization accounts
-- [ ] Resume version control
-- [ ] Export to multiple formats
-- [ ] Browser extension
-- [ ] Mobile app
-
-## 💡 Tips
-
-- Use descriptive project titles
-- Add comprehensive tags
-- Keep library organized
-- Update projects regularly
-- Test different templates
-- Tailor for each job
-
-## 🔗 Links
-
-- **Live Demo:** Coming soon
-- **Documentation:** [Docs](./DEPLOYMENT_GUIDE.md)
-- **API Reference:** See code comments
-- **Changelog:** [CHANGELOG_API_KEYS.md](./CHANGELOG_API_KEYS.md)
 
 ---
 
