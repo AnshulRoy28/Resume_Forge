@@ -1,0 +1,56 @@
+﻿<div class="flex flex-col gap-5 max-w-2xl">
+  <div class="anim">
+    <h1 class="font-geist text-xl font-semibold text-white">Settings</h1>
+    <p class="text-xs text-zinc-500 mt-0.5">Configure API keys and generation preferences.</p>
+  </div>
+
+  <div class="glass rounded-2xl p-6 flex flex-col gap-6 anim anim-d1">
+    <!-- Gemini Key -->
+    <div class="flex flex-col gap-2">
+      <label class="text-sm font-medium text-zinc-200">Gemini API Key <span class="text-red-400">*</span></label>
+      <p class="text-xs text-zinc-500">Required for AI features. Uses <strong>gemini-2.0-flash-exp</strong> model. Stored locally in your browser only (never on server).
+        Get your free API key at <a href="https://aistudio.google.com/apikey" target="_blank" class="text-blue-400 hover:text-blue-300 underline">aistudio.google.com/apikey</a>
+      </p>
+      <div class="flex gap-2">
+        <input id="settingsGeminiKey" type="password" placeholder="AIza..." class="input py-2.5 text-sm flex-1">
+        <button onclick="Settings.saveApiKey()" id="saveApiKeyBtn" class="btn-primary text-sm px-5">Save</button>
+      </div>
+      <div id="apiKeyStatus" class="hidden"></div>
+      <p class="text-[11px] text-zinc-600 flex items-center gap-1">
+        <iconify-icon icon="solar:shield-check-linear" class="text-green-400"></iconify-icon>
+        Your API key is stored only in your browser (localStorage). Never sent to or stored on our servers.
+      </p>
+    </div>
+
+    <div class="border-t border-white/5"></div>
+
+    <!-- GitHub Token -->
+    <div class="flex flex-col gap-2">
+      <label class="text-sm font-medium text-zinc-200">GitHub Token <span class="text-zinc-600 font-normal text-xs">(optional)</span></label>
+      <p class="text-xs text-zinc-500">Increases GitHub API rate limits for repo analysis. Create one at <a href="https://github.com/settings/tokens" target="_blank" class="text-blue-400 hover:text-blue-300 underline">github.com/settings/tokens</a></p>
+      <input id="settingsGHToken" type="password" placeholder="ghp_..." class="input py-2.5 text-sm">
+      <button onclick="Settings.saveGitHubToken()" class="btn-secondary text-sm w-fit">Save GitHub Token</button>
+    </div>
+
+    <div id="settingsAlert" class="alert hidden"></div>
+  </div>
+
+  <!-- Stats card -->
+  <div class="glass rounded-2xl p-6 flex flex-col gap-4 anim anim-d2">
+    <h2 class="font-geist text-sm font-semibold text-white">Library Stats</h2>
+    <div class="grid grid-cols-3 gap-4" id="statsGrid">
+      <div class="bg-[#0e0e11] rounded-xl p-4 flex flex-col gap-1">
+        <span id="statProjects" class="text-2xl font-semibold text-white font-geist">—</span>
+        <span class="text-xs text-zinc-500">Projects</span>
+      </div>
+      <div class="bg-[#0e0e11] rounded-xl p-4 flex flex-col gap-1">
+        <span id="statTemplates" class="text-2xl font-semibold text-white font-geist">—</span>
+        <span class="text-xs text-zinc-500">Templates</span>
+      </div>
+      <div class="bg-[#0e0e11] rounded-xl p-4 flex flex-col gap-1">
+        <span id="statResumes" class="text-2xl font-semibold text-white font-geist">—</span>
+        <span class="text-xs text-zinc-500">Resumes Generated</span>
+      </div>
+    </div>
+  </div>
+</div>

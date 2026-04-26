@@ -1,0 +1,93 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ResumeForge</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <link rel="stylesheet" href="/css/app.css">
+</head>
+<body class="min-h-screen bg-[#09090b] text-zinc-300">
+
+  <!-- Background glow -->
+  <div class="fixed inset-0 z-0 pointer-events-none overflow-hidden">
+    <div class="absolute top-0 left-1/2 -translate-x-1/2 w-px h-[55vh] bg-gradient-to-b from-zinc-500/20 to-transparent"></div>
+    <div class="absolute top-[8%] left-1/2 -translate-x-1/2 w-72 h-72 bg-zinc-500/[0.07] blur-[120px] rounded-full"></div>
+  </div>
+
+  <!-- Nav -->
+  <header class="fixed z-50 top-0 left-0 right-0 h-16 flex items-center justify-between px-6 md:px-8 border-b border-white/5 bg-[#09090b]/85 backdrop-blur-md">
+    <button onclick="App.nav('generate')" class="flex items-center gap-2 font-geist text-sm font-semibold text-white hover:opacity-75 transition-opacity">
+      <div class="w-6 h-6 rounded bg-white flex items-center justify-center flex-shrink-0">
+        <iconify-icon icon="solar:document-add-linear" style="font-size:13px;color:#000"></iconify-icon>
+      </div>
+      ResumeForge
+    </button>
+
+    <nav class="hidden md:flex items-center gap-7 text-sm font-medium text-zinc-400">
+      <button data-nav="generate"  onclick="App.nav('generate')"   class="nav-link relative hover:text-zinc-200 transition-colors">Generate</button>
+      <button data-nav="library"   onclick="App.nav('library')"    class="nav-link relative hover:text-zinc-200 transition-colors">Library</button>
+      <button data-nav="templates" onclick="App.nav('templates')"  class="nav-link relative hover:text-zinc-200 transition-colors">Templates</button>
+      <button data-nav="history"   onclick="App.nav('history')"    class="nav-link relative hover:text-zinc-200 transition-colors">History</button>
+    </nav>
+
+    <div class="flex items-center gap-2">
+      <div id="userMenu" class="hidden items-center gap-2 mr-2 text-sm text-zinc-400">
+        <span id="userName"></span>
+        <button onclick="Auth.logout()" 
+          class="text-xs px-3 py-1.5 rounded-md bg-zinc-800 hover:bg-zinc-700 transition-colors">
+          Logout
+        </button>
+      </div>
+      <button data-nav="settings" onclick="App.nav('settings')"
+        class="nav-link w-8 h-8 flex items-center justify-center rounded-md hover:bg-white/5 text-zinc-400 hover:text-white transition-colors">
+        <iconify-icon icon="solar:settings-linear" style="font-size:17px"></iconify-icon>
+      </button>
+      <button onclick="document.getElementById('mobileNav').classList.toggle('hidden')"
+        class="md:hidden w-8 h-8 flex items-center justify-center rounded-md hover:bg-white/5 text-zinc-400 hover:text-white transition-colors">
+        <iconify-icon icon="solar:hamburger-menu-linear" style="font-size:17px"></iconify-icon>
+      </button>
+    </div>
+  </header>
+
+  <!-- Mobile nav -->
+  <div id="mobileNav" class="hidden fixed top-16 left-0 right-0 z-40 bg-[#09090b]/95 backdrop-blur-md border-b border-white/5 p-4 flex-col gap-1">
+    <button onclick="App.nav('generate');document.getElementById('mobileNav').classList.add('hidden')"   class="text-left text-sm text-zinc-300 hover:text-white py-2.5 px-3 rounded-lg hover:bg-white/5 transition-colors">Generate</button>
+    <button onclick="App.nav('library');document.getElementById('mobileNav').classList.add('hidden')"    class="text-left text-sm text-zinc-300 hover:text-white py-2.5 px-3 rounded-lg hover:bg-white/5 transition-colors">Library</button>
+    <button onclick="App.nav('templates');document.getElementById('mobileNav').classList.add('hidden')"  class="text-left text-sm text-zinc-300 hover:text-white py-2.5 px-3 rounded-lg hover:bg-white/5 transition-colors">Templates</button>
+    <button onclick="App.nav('history');document.getElementById('mobileNav').classList.add('hidden')"    class="text-left text-sm text-zinc-300 hover:text-white py-2.5 px-3 rounded-lg hover:bg-white/5 transition-colors">History</button>
+    <button onclick="App.nav('settings');document.getElementById('mobileNav').classList.add('hidden')"   class="text-left text-sm text-zinc-300 hover:text-white py-2.5 px-3 rounded-lg hover:bg-white/5 transition-colors">Settings</button>
+  </div>
+
+  <!-- Page content injected here by app.js -->
+  <div id="page-content" class="relative z-10"></div>
+
+  <!-- Modal root -->
+  <div id="modal-root"></div>
+
+  <!-- Load shared app shell first, then page modules -->
+  <script src="/js/auth.js"></script>
+  <script src="/js/app.js"></script>
+  <script src="/js/latex-preview.js"></script>
+  <script src="/js/generate.js"></script>
+  <script src="/js/library.js"></script>
+  <script src="/js/templates.js"></script>
+  <script src="/js/history.js"></script>
+  <script src="/js/settings.js"></script>
+  <script>
+    // Show user info if logged in
+    if (Auth.isAuthenticated()) {
+      const user = Auth.getUser();
+      const userMenu = document.getElementById('userMenu');
+      const userName = document.getElementById('userName');
+      if (user && userMenu && userName) {
+        userName.textContent = user.name || user.email;
+        userMenu.classList.remove('hidden');
+        userMenu.classList.add('flex');
+      }
+    }
+  </script>
+</body>
+</html>

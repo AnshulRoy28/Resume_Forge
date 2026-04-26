@@ -1,0 +1,191 @@
+<div class="flex flex-col gap-5">
+  <!-- Header -->
+  <div class="text-center anim">
+    <h1 class="font-geist text-2xl md:text-3xl font-semibold text-white mb-1.5 tracking-tight">Forge Your Next Resume
+    </h1>
+    <p class="text-sm text-zinc-400">Analyze GitHub repos → build your library → paste a JD → get a tailored resume in
+      seconds.</p>
+  </div>
+
+  <!-- Main workspace -->
+  <div class="glass rounded-2xl flex flex-col lg:flex-row overflow-hidden anim anim-d1" style="min-height:700px">
+
+    <!-- LEFT: Inputs -->
+    <div class="w-full lg:w-[44%] flex flex-col gap-5 p-6 md:p-7 border-b lg:border-b-0 lg:border-r border-white/5">
+
+      <!-- Section label -->
+      <div class="flex items-center gap-2 border-b border-white/5 pb-4">
+        <iconify-icon icon="solar:briefcase-linear" class="text-white" style="font-size:16px"></iconify-icon>
+        <h2 class="font-geist text-sm font-semibold text-white">Target Job</h2>
+      </div>
+
+      <!-- GitHub Repo Analyzer -->
+      <div class="bg-[#0e0e11] border border-white/5 rounded-xl p-4 flex flex-col gap-3">
+        <div class="flex items-center gap-2">
+          <iconify-icon icon="solar:code-square-linear" class="text-zinc-400" style="font-size:14px"></iconify-icon>
+          <span class="text-xs font-medium text-zinc-300">Add GitHub Project to Library</span>
+        </div>
+        <div class="flex gap-2">
+          <input id="repoUrl" type="url" placeholder="https://github.com/owner/repo"
+            class="input input-mono flex-1 min-w-0 py-2 text-xs"
+            onkeydown="if(event.key==='Enter') Generate.analyzeRepo()">
+          <button id="analyzeBtn" onclick="Generate.analyzeRepo()"
+            class="btn-secondary flex-shrink-0 text-xs py-2 px-3">
+            <iconify-icon icon="solar:add-circle-linear" style="font-size:13px"></iconify-icon>
+            <span id="analyzeBtnTxt">Analyze</span>
+          </button>
+        </div>
+        <!-- Repo progress -->
+        <div id="repoProgress" class="hidden flex-col gap-1.5">
+          <div class="flex justify-between text-[10px] text-zinc-500">
+            <span id="repoStepTxt">Fetching...</span>
+            <span id="repoStepNum">1 / 4</span>
+          </div>
+          <div class="progress-track">
+            <div id="repoBar" class="progress-fill" style="width:0%"></div>
+          </div>
+        </div>
+        <div id="repoAlert" class="alert hidden"></div>
+      </div>
+
+      <!-- Job title + company -->
+      <div class="flex gap-3">
+        <div class="flex-1 flex flex-col gap-1.5">
+          <label class="text-[11px] font-medium text-zinc-500">Job Title</label>
+          <input id="jobTitle" type="text" placeholder="Senior Frontend Engineer" class="input py-2 text-sm">
+        </div>
+        <div class="flex-1 flex flex-col gap-1.5">
+          <label class="text-[11px] font-medium text-zinc-500">Company</label>
+          <input id="company" type="text" placeholder="AMD" class="input py-2 text-sm">
+        </div>
+      </div>
+
+      <!-- JD textarea -->
+      <div class="flex flex-col gap-1.5 flex-1">
+        <div class="flex justify-between items-center">
+          <label class="text-[11px] font-medium text-zinc-500">Job Description</label>
+          <div class="flex items-center gap-3">
+            <button onclick="document.getElementById('jobDescription').value='';Generate.updateCharCount()"
+              class="text-[10px] text-zinc-600 hover:text-zinc-300 transition-colors flex items-center gap-1">
+              <iconify-icon icon="solar:trash-bin-trash-linear" style="font-size:10px"></iconify-icon> Clear
+            </button>
+            <span id="charCount" class="text-[10px] text-zinc-600">0 / 10000</span>
+          </div>
+        </div>
+        <textarea id="jobDescription" oninput="Generate.updateCharCount()"
+          placeholder="Paste the full job description here..." class="input scroll flex-1 min-h-[180px]"></textarea>
+      </div>
+
+      <!-- Upload JD file -->
+      <label
+        class="border border-dashed border-white/10 rounded-xl p-4 bg-white/[0.01] hover:bg-white/[0.03] transition-colors flex items-center justify-center gap-3 cursor-pointer group">
+        <iconify-icon icon="solar:upload-minimalistic-linear"
+          class="text-zinc-500 group-hover:text-white transition-colors" style="font-size:18px"></iconify-icon>
+        <div>
+          <p class="text-xs font-medium text-zinc-400 group-hover:text-zinc-200 transition-colors">Upload JD file</p>
+          <p class="text-[10px] text-zinc-600">.txt supported</p>
+        </div>
+        <input id="jdFile" type="file" accept=".txt" class="hidden" onchange="Generate.loadJDFile(this)">
+      </label>
+
+      <!-- Generate button -->
+      <button id="genBtn" onclick="Generate.run()" class="btn-primary w-full py-3 text-sm mt-1">
+        <iconify-icon icon="solar:magic-stick-3-linear" style="font-size:15px"></iconify-icon>
+        <span id="genBtnTxt">Generate Tailored Resume</span>
+      </button>
+    </div>
+
+    <!-- RIGHT: Output -->
+    <div class="flex-1 flex flex-col gap-4 p-6 md:p-7 min-h-[400px]">
+
+      <!-- Generation progress -->
+      <div id="genProgress" class="hidden bg-[#0e0e11] border border-white/5 rounded-xl p-4 flex flex-col gap-3">
+        <div class="flex items-center justify-between text-xs">
+          <span class="text-white flex items-center gap-2">
+            <span class="spinner"></span>
+            <span id="genStepTxt">Starting...</span>
+          </span>
+          <span id="genStepNum" class="text-zinc-500 text-[11px]">1 / 5</span>
+        </div>
+        <div class="progress-track" style="height:6px">
+          <div id="genBar" class="progress-fill" style="width:0%"></div>
+        </div>
+        <div class="flex justify-between text-[10px] text-zinc-600 uppercase tracking-wider">
+          <span>Parse JD</span><span>Score</span><span>Select</span><span>Tailor</span><span>Done</span>
+        </div>
+      </div>
+
+      <!-- Matched sources -->
+      <div id="sourcesPanel" class="hidden bg-[#0e0e11] border border-white/5 rounded-xl p-4 flex flex-col gap-2.5">
+        <div class="flex items-center justify-between mb-0.5">
+          <span class="text-[11px] font-medium text-zinc-400 uppercase tracking-wider">Matched Sources</span>
+          <button onclick="App.nav('library')"
+            class="text-[10px] text-zinc-500 hover:text-white transition-colors flex items-center gap-1">
+            Manage <iconify-icon icon="solar:arrow-right-linear" style="font-size:10px"></iconify-icon>
+          </button>
+        </div>
+        <div id="sourcesList" class="flex flex-col gap-1.5 max-h-44 overflow-y-auto scroll"></div>
+      </div>
+
+      <!-- Output panel -->
+      <div class="flex-1 flex flex-col bg-[#09090b] border border-white/10 rounded-xl overflow-hidden">
+
+        <!-- Empty state -->
+        <div id="outEmpty" class="empty-state flex-1">
+          <div class="empty-icon">
+            <iconify-icon icon="solar:document-add-linear" class="text-zinc-600" style="font-size:22px"></iconify-icon>
+          </div>
+          <div>
+            <p class="text-sm font-medium text-zinc-300 mb-1">No resume yet</p>
+            <p class="text-xs text-zinc-500">Add GitHub projects to your library,<br>paste a job description, and hit
+              Generate.</p>
+          </div>
+          <button onclick="App.nav('library')" class="btn-secondary text-xs py-2">
+            <iconify-icon icon="solar:library-linear" style="font-size:12px"></iconify-icon>
+            Go to Library
+          </button>
+        </div>
+
+        <!-- Result -->
+        <div id="outResult" class="hidden flex-col flex-1 overflow-hidden">
+          <!-- Tab bar -->
+          <div class="flex items-center justify-between border-b border-white/5 bg-white/[0.01] flex-shrink-0 px-1">
+            <div class="flex">
+              <button onclick="Generate.switchTab('latex')" data-tab="latex" class="tab active">LaTeX Source</button>
+              <button onclick="Generate.switchTab('preview')" data-tab="preview" class="tab">Preview</button>
+              <button onclick="Generate.switchTab('md')" data-tab="md" class="tab flex items-center gap-1.5">
+                Markdown Used
+                <span id="mdCount" class="px-1.5 py-0.5 rounded-full bg-white/10 text-[9px] text-zinc-300">0</span>
+              </button>
+            </div>
+            <div class="flex items-center gap-2 pr-2">
+              <button id="copyLatexBtn" onclick="Generate.copyLatex()" class="btn-secondary text-[11px] py-1.5 px-2.5">
+                <iconify-icon icon="solar:copy-linear" style="font-size:11px"></iconify-icon> Copy
+              </button>
+              <button onclick="Generate.downloadLatex()" class="btn-secondary text-[11px] py-1.5 px-2.5">
+                <iconify-icon icon="solar:download-minimalistic-linear" style="font-size:11px"></iconify-icon> .TEX
+              </button>
+              <button id="dlHtmlBtn" onclick="Generate.downloadHtml()" class="btn-primary text-[11px] py-1.5 px-2.5 hidden">
+                <iconify-icon icon="solar:download-minimalistic-linear" style="font-size:11px"></iconify-icon> .HTML
+              </button>
+            </div>
+          </div>
+          <!-- Tab content -->
+          <div class="flex-1 overflow-auto scroll">
+            <div id="latexTab" class="p-4">
+              <pre id="latexOut" class="text-xs text-zinc-300 leading-relaxed whitespace-pre-wrap font-mono"></pre>
+            </div>
+            <div id="previewTab" class="hidden bg-white" style="min-height:100%">
+              <div id="latexPreview" class="latex-resume"></div>
+            </div>
+            <div id="mdTab" class="p-4 hidden">
+              <div id="mdUsedList" class="flex flex-col gap-5"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="genAlert" class="alert hidden"></div>
+    </div>
+  </div>
+</div>

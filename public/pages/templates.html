@@ -1,0 +1,58 @@
+﻿<div class="flex flex-col gap-5">
+  <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 anim">
+    <div>
+      <h1 class="font-geist text-xl font-semibold text-white">Resume Templates</h1>
+      <p class="text-xs text-zinc-500 mt-0.5">LaTeX templates used to generate your resumes. The default is used automatically.</p>
+    </div>
+    <button onclick="Templates.openUploadModal()" class="btn-primary text-sm flex-shrink-0">
+      <iconify-icon icon="solar:upload-minimalistic-linear" style="font-size:14px"></iconify-icon>
+      Upload Template
+    </button>
+  </div>
+  <div id="templatesGrid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 anim anim-d1"></div>
+</div>
+
+<div id="uploadModal" class="modal-backdrop hidden">
+  <div class="modal-box" onclick="event.stopPropagation()">
+    <div class="flex items-center justify-between">
+      <h3 class="font-geist text-base font-semibold text-white">Upload Template</h3>
+      <button onclick="Templates.closeUploadModal()" class="text-zinc-500 hover:text-white transition-colors">
+        <iconify-icon icon="solar:close-circle-linear" style="font-size:20px"></iconify-icon>
+      </button>
+    </div>
+    <div class="flex flex-col gap-1.5">
+      <label class="text-xs font-medium text-zinc-400">Template Name</label>
+      <input id="tmplName" type="text" placeholder="My Custom Template" class="input py-2.5 text-sm">
+    </div>
+    <div class="flex flex-col gap-1.5">
+      <label class="text-xs font-medium text-zinc-400">Description</label>
+      <input id="tmplDesc" type="text" placeholder="Brief description..." class="input py-2.5 text-sm">
+    </div>
+    <label class="border border-dashed border-white/10 rounded-xl p-5 bg-white/[0.01] hover:bg-white/[0.03] transition-colors flex flex-col items-center justify-center gap-2 cursor-pointer group">
+      <iconify-icon icon="solar:upload-minimalistic-linear" class="text-zinc-500 group-hover:text-white transition-colors" style="font-size:22px"></iconify-icon>
+      <p class="text-sm font-medium text-zinc-400 group-hover:text-zinc-200 transition-colors">Upload .tex or .md file</p>
+      <p id="tmplFileName" class="text-xs text-zinc-600">No file selected</p>
+      <input id="tmplFile" type="file" accept=".tex,.md,.txt" class="hidden"
+        onchange="document.getElementById('tmplFileName').textContent=this.files[0]?.name||'No file selected'">
+    </label>
+    <div id="tmplAlert" class="alert hidden"></div>
+    <div class="flex gap-3 justify-end">
+      <button onclick="Templates.closeUploadModal()" class="btn-secondary">Cancel</button>
+      <button onclick="Templates.upload()" class="btn-primary">Upload</button>
+    </div>
+  </div>
+</div>
+
+<div id="previewModal" class="modal-backdrop hidden">
+  <div class="modal-box wide" onclick="event.stopPropagation()" style="max-height:90vh;overflow:hidden;display:flex;flex-direction:column;gap:0;padding:0">
+    <div class="flex items-center justify-between p-5 border-b border-white/5 flex-shrink-0">
+      <h3 id="previewTitle" class="font-geist text-base font-semibold text-white"></h3>
+      <button onclick="Templates.closePreviewModal()" class="text-zinc-500 hover:text-white transition-colors">
+        <iconify-icon icon="solar:close-circle-linear" style="font-size:20px"></iconify-icon>
+      </button>
+    </div>
+    <div class="flex-1 overflow-auto scroll p-5" style="min-height:0">
+      <pre id="previewContent" class="text-xs text-zinc-300 leading-relaxed whitespace-pre-wrap font-mono"></pre>
+    </div>
+  </div>
+</div>

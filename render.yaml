@@ -1,0 +1,15 @@
+# Render Blueprint for ResumeForge
+services:
+  - type: web
+    name: resumeforge
+    env: node
+    plan: free
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: JWT_SECRET
+        generateValue: true
+        sync: false
+    healthCheckPath: /
