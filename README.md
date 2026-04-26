@@ -110,8 +110,33 @@ NODE_ENV=production
 
 ## 📚 Documentation
 
-- [DEPLOYMENT_GUIDE.md](./DEPLOYMENT_GUIDE.md) - Complete deployment instructions
-- [HOW_TO_GET_API_KEY.md](./HOW_TO_GET_API_KEY.md) - Step-by-step API key guide
+- [Deployment Guide](./docs/DEPLOYMENT_GUIDE.md) - Complete deployment instructions
+- [How to Get API Key](./docs/HOW_TO_GET_API_KEY.md) - Step-by-step API key guide
+
+## 📁 Project Structure
+
+```
+Resume_Forge/
+├── server.js              # Main server application
+├── package.json           # Dependencies and scripts
+├── public/                # Frontend files
+│   ├── index.html        # Main HTML
+│   ├── css/              # Stylesheets
+│   ├── js/               # JavaScript modules
+│   └── pages/            # Page templates
+├── templates/             # Resume templates
+│   └── jake_resume.md    # Default LaTeX template
+├── scripts/               # Utility scripts
+│   ├── reset-db.js       # Database initialization
+│   ├── migrate-db.js     # Data migration
+│   └── deploy.sh         # Deployment helper
+├── docs/                  # Documentation
+│   ├── DEPLOYMENT_GUIDE.md
+│   └── HOW_TO_GET_API_KEY.md
+├── Procfile              # Heroku config
+├── render.yaml           # Render config
+└── vercel.json           # Vercel config
+```
 
 ## 🤝 Contributing
 

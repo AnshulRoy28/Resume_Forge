@@ -73,7 +73,7 @@ db.exec(`
 `);
 
 // Seed Jake's template
-const jakeTemplate = fs.readFileSync('jake_resume.md', 'utf-8');
+const jakeTemplate = fs.readFileSync('../templates/jake_resume.md', 'utf-8');
 db.prepare(`INSERT INTO templates (name, description, content, is_default, is_global, user_id) VALUES (?, ?, ?, 1, 1, NULL)`)
   .run("Jake's Resume Template", "Classic single-page LaTeX resume template by Jake Gutierrez", jakeTemplate);
 

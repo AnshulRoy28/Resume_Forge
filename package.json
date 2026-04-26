@@ -5,9 +5,9 @@
   "scripts": {
     "dev": "node server.js",
     "start": "node server.js",
-    "migrate": "node migrate-db.js",
-    "reset-db": "node reset-db.js",
-    "add-api-key-column": "node add-api-key-column.js"
+    "migrate": "node scripts/migrate-db.js",
+    "reset-db": "node scripts/reset-db.js",
+    "add-api-key-column": "node scripts/add-api-key-column.js"
   },
   "dependencies": {
     "@google/genai": "^1.0.0",

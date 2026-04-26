@@ -97,7 +97,7 @@ db.exec(`
 // Seed Jake's template if no templates exist
 const templateCount = db.prepare('SELECT COUNT(*) as c FROM templates').get();
 if (templateCount.c === 0) {
-  const jakeTemplate = fs.readFileSync(path.join(__dirname, 'jake_resume.md'), 'utf-8');
+  const jakeTemplate = fs.readFileSync(path.join(__dirname, 'templates', 'jake_resume.md'), 'utf-8');
   db.prepare(`INSERT INTO templates (name, description, content, is_default, is_global, user_id) VALUES (?, ?, ?, 1, 1, NULL)`)
     .run("Jake's Resume Template", "Classic single-page LaTeX resume template by Jake Gutierrez", jakeTemplate);
 }
