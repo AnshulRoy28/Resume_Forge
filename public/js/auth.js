@@ -64,8 +64,11 @@ const Auth = {
 
   async handleRegister(e) {
     e.preventDefault();
-    const name = document.getElementById('registerName').value;
-    const email = document.getElementById('registerEmail').value;
+    const name = document.getElementById('registerName').value.trim();
+    const email = document.getElementById('registerEmail').value.trim();
+    const phone = document.getElementById('registerPhone').value.trim();
+    const linkedin_url = document.getElementById('registerLinkedIn').value.trim();
+    const github_url = document.getElementById('registerGitHub').value.trim();
     const password = document.getElementById('registerPassword').value;
     const errorDiv = document.getElementById('registerError');
     const btn = document.getElementById('registerBtn');
@@ -78,7 +81,14 @@ const Auth = {
       const res = await fetch('/api/auth/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password, name: name || undefined })
+        body: JSON.stringify({ 
+          email, 
+          password, 
+          name: name || undefined,
+          phone: phone || undefined,
+          linkedin_url: linkedin_url || undefined,
+          github_url: github_url || undefined
+        })
       });
 
       const data = await res.json();
@@ -106,16 +116,28 @@ const Auth = {
   },
 
   getToken() {
-    return localStorage.getItem('token');
+    try {
+      return localStorage.getItem('token');
+    } catch (e) {
+      return null;
+    }
   },
 
   getUser() {
-    const user = localStorage.getItem('user');
-    return user ? JSON.parse(user) : null;
+    try {
+      const user = localStorage.getItem('user');
+      return user ? JSON.parse(user) : null;
+    } catch (e) {
+      return null;
+    }
   },
 
   isAuthenticated() {
-    return !!this.getToken();
+    try {
+      return !!this.getToken();
+    } catch (e) {
+      return false;
+    }
   },
 
   getApiKey() {

@@ -7,11 +7,26 @@ const LatexPreview = (() => {
   // ── Inline LaTeX → HTML ────────────────────────────────────────
   function _inline(text) {
     if (!text) return '';
-    return text
-      .replace(/\\textbf\{([^}]*)\}/g, '<strong>$1</strong>')
+    
+    // Process nested commands recursively
+    let result = text;
+    
+    // Handle \textbf with proper nesting
+    let changed = true;
+    while (changed) {
+      changed = false;
+      result = result.replace(/\\textbf\{([^{}]*(?:\{[^{}]*\}[^{}]*)*)\}/g, (match, content) => {
+        changed = true;
+        return '<strong>' + content + '</strong>';
+      });
+    }
+    
+    // Handle other formatting
+    result = result
       .replace(/\\textit\{([^}]*)\}/g, '<em>$1</em>')
       .replace(/\\emph\{([^}]*)\}/g, '<em>$1</em>')
       .replace(/\\underline\{([^}]*)\}/g, '<u>$1</u>')
+      .replace(/\\textasciitilde/g, '~')
       .replace(/\\scshape\b/g, '')
       .replace(/\\Huge\b/g, '')
       .replace(/\\Large\b/g, '')
@@ -27,12 +42,15 @@ const LatexPreview = (() => {
       .replace(/\\hspace\{[^}]*\}/g, ' ')
       .replace(/\\quad/g, '  ')
       .replace(/\\,/g, ' ')
-      .replace(/\\\\/g, '')
+      .replace(/\\\\/g, '<br>')
       .replace(/\\&/g, '&')
       .replace(/~~/g, ' ')
-      .replace(/~/g, ' ')
-      .replace(/\{|\}/g, '')
-      .trim();
+      .replace(/~/g, ' ');
+    
+    // Remove remaining simple braces
+    result = result.replace(/\{([^{}]*)\}/g, '$1');
+    
+    return result.trim();
   }
 
   // ── Extract argument from \cmd{...} ───────────────────────────
@@ -249,21 +267,80 @@ const LatexPreview = (() => {
       }
       if (cmd === 'item') {
         if (!inItemList) { html += '<ul class="item-list">'; inItemList = true; }
-        // grab rest of line as item text
+        // grab rest of line as item text - handle nested braces properly
         let j = cmdEnd;
-        while (j < text.length && text[j] !== '\n' && !text.slice(j).startsWith('\\item') && !text.slice(j).startsWith('\\end')) j++;
-        html += `<li>${_inline(text.slice(cmdEnd, j))}</li>`;
-        i = j; continue;
+        let braceDepth = 0;
+        let itemContent = '';
+        
+        // Skip whitespace after \item
+        while (j < text.length && /\s/.test(text[j])) j++;
+        
+        // Collect content until we hit another \item or \end
+        while (j < text.length) {
+          if (text[j] === '{') {
+            braceDepth++;
+            itemContent += text[j];
+          } else if (text[j] === '}') {
+            braceDepth--;
+            itemContent += text[j];
+          } else if (braceDepth === 0) {
+            // Check if we're at the start of a new command
+            if (text.slice(j).startsWith('\\item') || text.slice(j).startsWith('\\end')) {
+              break;
+            }
+            itemContent += text[j];
+          } else {
+            itemContent += text[j];
+          }
+          j++;
+        }
+        
+        itemContent = itemContent.trim();
+        if (itemContent) {
+          html += `<li>${_inline(itemContent)}</li>`;
+        }
+        i = j; 
+        continue;
       }
       // begin/end itemize
       if (cmd === 'begin') {
         const r = _arg(text, cmdEnd + 1);
-        if (r.val === 'itemize') { html += '<ul class="item-list">'; inItemList = true; }
+        if (r.val === 'itemize') { 
+          // Check for optional parameters like [leftmargin=...]
+          let skipPos = r.end;
+          while (skipPos < text.length && /\s/.test(text[skipPos])) skipPos++;
+          if (text[skipPos] === '[') {
+            // Skip optional parameters
+            let bracketDepth = 1;
+            skipPos++;
+            while (skipPos < text.length && bracketDepth > 0) {
+              if (text[skipPos] === '[') bracketDepth++;
+              else if (text[skipPos] === ']') bracketDepth--;
+              skipPos++;
+            }
+            i = skipPos;
+          } else {
+            i = r.end;
+          }
+          html += '<ul class="item-list">'; 
+          inItemList = true;
+          continue;
+        }
         i = r.end; continue;
       }
       if (cmd === 'end') {
         const r = _arg(text, cmdEnd + 1);
         if (r.val === 'itemize') closeItemList();
+        i = r.end; continue;
+      }
+      // Handle \small command
+      if (cmd === 'small') {
+        i = cmdEnd; continue;
+      }
+      // Handle \textbf with nested content
+      if (cmd === 'textbf') {
+        const r = _arg(text, cmdEnd + 1);
+        html += `<strong>${_inline(r.val)}</strong>`;
         i = r.end; continue;
       }
 
@@ -326,6 +403,7 @@ const LatexPreview = (() => {
       line-height: 1.35;
     }
     .item-list li strong { font-weight: bold; }
+    .item-list li br { display: block; margin: 2px 0; }
     a { color: #000; }
   `;
 

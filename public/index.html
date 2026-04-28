@@ -27,6 +27,7 @@
     </button>
 
     <nav class="hidden md:flex items-center gap-7 text-sm font-medium text-zinc-400">
+      <button data-nav="add"       onclick="App.nav('add')"        class="nav-link relative hover:text-zinc-200 transition-colors">Add</button>
       <button data-nav="generate"  onclick="App.nav('generate')"   class="nav-link relative hover:text-zinc-200 transition-colors">Generate</button>
       <button data-nav="library"   onclick="App.nav('library')"    class="nav-link relative hover:text-zinc-200 transition-colors">Library</button>
       <button data-nav="templates" onclick="App.nav('templates')"  class="nav-link relative hover:text-zinc-200 transition-colors">Templates</button>
@@ -54,6 +55,7 @@
 
   <!-- Mobile nav -->
   <div id="mobileNav" class="hidden fixed top-16 left-0 right-0 z-40 bg-[#09090b]/95 backdrop-blur-md border-b border-white/5 p-4 flex-col gap-1">
+    <button onclick="App.nav('add');document.getElementById('mobileNav').classList.add('hidden')"        class="text-left text-sm text-zinc-300 hover:text-white py-2.5 px-3 rounded-lg hover:bg-white/5 transition-colors">Add</button>
     <button onclick="App.nav('generate');document.getElementById('mobileNav').classList.add('hidden')"   class="text-left text-sm text-zinc-300 hover:text-white py-2.5 px-3 rounded-lg hover:bg-white/5 transition-colors">Generate</button>
     <button onclick="App.nav('library');document.getElementById('mobileNav').classList.add('hidden')"    class="text-left text-sm text-zinc-300 hover:text-white py-2.5 px-3 rounded-lg hover:bg-white/5 transition-colors">Library</button>
     <button onclick="App.nav('templates');document.getElementById('mobileNav').classList.add('hidden')"  class="text-left text-sm text-zinc-300 hover:text-white py-2.5 px-3 rounded-lg hover:bg-white/5 transition-colors">Templates</button>
@@ -71,6 +73,7 @@
   <script src="/js/auth.js"></script>
   <script src="/js/app.js"></script>
   <script src="/js/latex-preview.js"></script>
+  <script src="/js/add.js"></script>
   <script src="/js/generate.js"></script>
   <script src="/js/library.js"></script>
   <script src="/js/templates.js"></script>

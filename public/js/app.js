@@ -17,7 +17,7 @@ const App = (() => {
       currentPage = 'auth';
       name = 'auth';
     } else if (Auth.isAuthenticated() && name === 'auth') {
-      name = 'generate';
+      name = 'add';
     }
 
     if (currentPage === name) return;
@@ -85,7 +85,13 @@ const App = (() => {
     // Handle auth errors
     if (res.status === 401 || res.status === 403) {
       Auth.logout();
-      return;
+      throw new Error('Session expired. Please login again.');
+    }
+    
+    // Check if response is JSON
+    const contentType = res.headers.get('content-type');
+    if (!contentType || !contentType.includes('application/json')) {
+      throw new Error('Server error. Please try again.');
     }
     
     const data = await res.json();
@@ -163,24 +169,37 @@ const App = (() => {
 
   // ── Boot ──────────────────────────────────────────────────────
   document.addEventListener('DOMContentLoaded', () => {
-    // Check auth and redirect if needed
-    if (!Auth.isAuthenticated()) {
-      nav('auth');
-      return;
-    }
+    try {
+      // Check auth and redirect if needed
+      const isAuth = Auth.isAuthenticated();
+      console.log('Auth status:', isAuth);
+      
+      if (!isAuth) {
+        nav('auth');
+        return;
+      }
 
-    const hash = location.hash.replace('#', '') || 'generate';
-    nav(hash);
+      const hash = location.hash.replace('#', '') || 'add';
+      nav(hash);
+    } catch (err) {
+      console.error('Boot error:', err);
+      nav('auth');
+    }
   });
 
   window.addEventListener('hashchange', () => {
-    if (!Auth.isAuthenticated()) {
-      nav('auth');
-      return;
-    }
+    try {
+      if (!Auth.isAuthenticated()) {
+        nav('auth');
+        return;
+      }
 
-    const hash = location.hash.replace('#', '') || 'generate';
-    nav(hash);
+      const hash = location.hash.replace('#', '') || 'add';
+      nav(hash);
+    } catch (err) {
+      console.error('Hashchange error:', err);
+      nav('auth');
+    }
   });
 
   return { nav, register, openModal, closeModal, api, sleep, setBtn, showAlert, hideAlert, copyText, downloadFile, formatDate, formatDateTime, scoreTag, tagsHTML, getSetting, setSetting };

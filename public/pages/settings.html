@@ -1,10 +1,54 @@
 ﻿<div class="flex flex-col gap-5 max-w-2xl">
   <div class="anim">
     <h1 class="font-geist text-xl font-semibold text-white">Settings</h1>
-    <p class="text-xs text-zinc-500 mt-0.5">Configure API keys and generation preferences.</p>
+    <p class="text-xs text-zinc-500 mt-0.5">Manage your profile, API keys, and preferences.</p>
   </div>
 
+  <!-- Profile Section -->
   <div class="glass rounded-2xl p-6 flex flex-col gap-6 anim anim-d1">
+    <div>
+      <h2 class="font-geist text-sm font-semibold text-white mb-1">Profile Information</h2>
+      <p class="text-xs text-zinc-500">This information will be used in your generated resumes.</p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div class="flex flex-col gap-2">
+        <label class="text-sm font-medium text-zinc-200">Full Name *</label>
+        <input id="profileName" type="text" placeholder="John Doe" class="input py-2.5 text-sm">
+      </div>
+      <div class="flex flex-col gap-2">
+        <label class="text-sm font-medium text-zinc-200">Email *</label>
+        <input id="profileEmail" type="email" disabled class="input py-2.5 text-sm bg-zinc-800/50 cursor-not-allowed">
+        <p class="text-[10px] text-zinc-600">Email cannot be changed</p>
+      </div>
+    </div>
+
+    <div class="flex flex-col gap-2">
+      <label class="text-sm font-medium text-zinc-200">Phone Number</label>
+      <input id="profilePhone" type="tel" placeholder="+1 (555) 123-4567" class="input py-2.5 text-sm">
+    </div>
+
+    <div class="flex flex-col gap-2">
+      <label class="text-sm font-medium text-zinc-200">LinkedIn URL</label>
+      <input id="profileLinkedIn" type="url" placeholder="https://linkedin.com/in/johndoe" class="input py-2.5 text-sm">
+    </div>
+
+    <div class="flex flex-col gap-2">
+      <label class="text-sm font-medium text-zinc-200">GitHub URL</label>
+      <input id="profileGitHub" type="url" placeholder="https://github.com/johndoe" class="input py-2.5 text-sm">
+    </div>
+
+    <div id="profileAlert" class="alert hidden"></div>
+    <button onclick="Settings.saveProfile()" id="saveProfileBtn" class="btn-primary text-sm w-fit">Save Profile</button>
+  </div>
+
+  <!-- API Keys Section -->
+  <div class="glass rounded-2xl p-6 flex flex-col gap-6 anim anim-d2">
+    <div>
+      <h2 class="font-geist text-sm font-semibold text-white mb-1">API Keys</h2>
+      <p class="text-xs text-zinc-500">Configure API keys for AI features and GitHub integration.</p>
+    </div>
+
     <!-- Gemini Key -->
     <div class="flex flex-col gap-2">
       <label class="text-sm font-medium text-zinc-200">Gemini API Key <span class="text-red-400">*</span></label>
@@ -36,7 +80,7 @@
   </div>
 
   <!-- Stats card -->
-  <div class="glass rounded-2xl p-6 flex flex-col gap-4 anim anim-d2">
+  <div class="glass rounded-2xl p-6 flex flex-col gap-4 anim anim-d3">
     <h2 class="font-geist text-sm font-semibold text-white">Library Stats</h2>
     <div class="grid grid-cols-3 gap-4" id="statsGrid">
       <div class="bg-[#0e0e11] rounded-xl p-4 flex flex-col gap-1">

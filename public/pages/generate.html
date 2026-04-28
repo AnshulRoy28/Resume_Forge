@@ -19,35 +19,6 @@
         <h2 class="font-geist text-sm font-semibold text-white">Target Job</h2>
       </div>
 
-      <!-- GitHub Repo Analyzer -->
-      <div class="bg-[#0e0e11] border border-white/5 rounded-xl p-4 flex flex-col gap-3">
-        <div class="flex items-center gap-2">
-          <iconify-icon icon="solar:code-square-linear" class="text-zinc-400" style="font-size:14px"></iconify-icon>
-          <span class="text-xs font-medium text-zinc-300">Add GitHub Project to Library</span>
-        </div>
-        <div class="flex gap-2">
-          <input id="repoUrl" type="url" placeholder="https://github.com/owner/repo"
-            class="input input-mono flex-1 min-w-0 py-2 text-xs"
-            onkeydown="if(event.key==='Enter') Generate.analyzeRepo()">
-          <button id="analyzeBtn" onclick="Generate.analyzeRepo()"
-            class="btn-secondary flex-shrink-0 text-xs py-2 px-3">
-            <iconify-icon icon="solar:add-circle-linear" style="font-size:13px"></iconify-icon>
-            <span id="analyzeBtnTxt">Analyze</span>
-          </button>
-        </div>
-        <!-- Repo progress -->
-        <div id="repoProgress" class="hidden flex-col gap-1.5">
-          <div class="flex justify-between text-[10px] text-zinc-500">
-            <span id="repoStepTxt">Fetching...</span>
-            <span id="repoStepNum">1 / 4</span>
-          </div>
-          <div class="progress-track">
-            <div id="repoBar" class="progress-fill" style="width:0%"></div>
-          </div>
-        </div>
-        <div id="repoAlert" class="alert hidden"></div>
-      </div>
-
       <!-- Job title + company -->
       <div class="flex gap-3">
         <div class="flex-1 flex flex-col gap-1.5">
@@ -93,6 +64,20 @@
         <iconify-icon icon="solar:magic-stick-3-linear" style="font-size:15px"></iconify-icon>
         <span id="genBtnTxt">Generate Tailored Resume</span>
       </button>
+
+      <!-- ATS Tips -->
+      <div class="bg-blue-500/5 border border-blue-500/20 rounded-xl p-3.5 flex gap-3">
+        <iconify-icon icon="solar:lightbulb-linear" class="text-blue-400 flex-shrink-0" style="font-size:16px"></iconify-icon>
+        <div class="flex flex-col gap-1.5">
+          <p class="text-[11px] font-semibold text-blue-300">2026 ATS Optimization Tips</p>
+          <ul class="text-[10px] text-zinc-400 space-y-1 leading-relaxed">
+            <li>• File naming: Use <code class="text-blue-300 bg-blue-500/10 px-1 rounded">FirstName_LastName_JobTitle_2026.pdf</code></li>
+            <li>• Match exact job title from posting (10x more likely to get interview)</li>
+            <li>• Single-column layout only (multi-column breaks ATS parsing)</li>
+            <li>• Save as .docx for best ATS compatibility (PDF works too)</li>
+          </ul>
+        </div>
+      </div>
     </div>
 
     <!-- RIGHT: Output -->
@@ -111,7 +96,7 @@
           <div id="genBar" class="progress-fill" style="width:0%"></div>
         </div>
         <div class="flex justify-between text-[10px] text-zinc-600 uppercase tracking-wider">
-          <span>Parse JD</span><span>Score</span><span>Select</span><span>Tailor</span><span>Done</span>
+          <span>Parse</span><span>Score</span><span>Generate</span><span>Integrate</span><span>Verify</span><span>Done</span>
         </div>
       </div>
 
@@ -137,12 +122,11 @@
           </div>
           <div>
             <p class="text-sm font-medium text-zinc-300 mb-1">No resume yet</p>
-            <p class="text-xs text-zinc-500">Add GitHub projects to your library,<br>paste a job description, and hit
-              Generate.</p>
+            <p class="text-xs text-zinc-500">Add items to your library,<br>paste a job description, and hit Generate.</p>
           </div>
-          <button onclick="App.nav('library')" class="btn-secondary text-xs py-2">
-            <iconify-icon icon="solar:library-linear" style="font-size:12px"></iconify-icon>
-            Go to Library
+          <button onclick="App.nav('add')" class="btn-secondary text-xs py-2">
+            <iconify-icon icon="solar:add-circle-linear" style="font-size:12px"></iconify-icon>
+            Add to Library
           </button>
         </div>
 
@@ -151,14 +135,27 @@
           <!-- Tab bar -->
           <div class="flex items-center justify-between border-b border-white/5 bg-white/[0.01] flex-shrink-0 px-1">
             <div class="flex">
-              <button onclick="Generate.switchTab('latex')" data-tab="latex" class="tab active">LaTeX Source</button>
-              <button onclick="Generate.switchTab('preview')" data-tab="preview" class="tab">Preview</button>
+              <button onclick="Generate.switchTab('editor')" data-tab="editor" class="tab active">
+                <iconify-icon icon="solar:code-linear" style="font-size:12px"></iconify-icon>
+                Editor
+              </button>
+              <button onclick="Generate.switchTab('split')" data-tab="split" class="tab">
+                <iconify-icon icon="solar:split-horizontal-linear" style="font-size:12px"></iconify-icon>
+                Split View
+              </button>
+              <button onclick="Generate.switchTab('preview')" data-tab="preview" class="tab">
+                <iconify-icon icon="solar:eye-linear" style="font-size:12px"></iconify-icon>
+                Preview
+              </button>
               <button onclick="Generate.switchTab('md')" data-tab="md" class="tab flex items-center gap-1.5">
-                Markdown Used
+                Sources
                 <span id="mdCount" class="px-1.5 py-0.5 rounded-full bg-white/10 text-[9px] text-zinc-300">0</span>
               </button>
             </div>
             <div class="flex items-center gap-2 pr-2">
+              <button id="updatePreviewBtn" onclick="Generate.updatePreview()" class="btn-secondary text-[11px] py-1.5 px-2.5 hidden">
+                <iconify-icon icon="solar:refresh-linear" style="font-size:11px"></iconify-icon> Update
+              </button>
               <button id="copyLatexBtn" onclick="Generate.copyLatex()" class="btn-secondary text-[11px] py-1.5 px-2.5">
                 <iconify-icon icon="solar:copy-linear" style="font-size:11px"></iconify-icon> Copy
               </button>
@@ -171,14 +168,26 @@
             </div>
           </div>
           <!-- Tab content -->
-          <div class="flex-1 overflow-auto scroll">
-            <div id="latexTab" class="p-4">
-              <pre id="latexOut" class="text-xs text-zinc-300 leading-relaxed whitespace-pre-wrap font-mono"></pre>
+          <div class="flex-1 overflow-hidden flex flex-col">
+            <!-- Editor Tab -->
+            <div id="editorTab" class="flex-1 overflow-auto scroll p-4">
+              <textarea id="latexEditor" class="w-full h-full min-h-[500px] bg-[#0e0e11] border border-white/10 rounded-lg p-4 text-xs text-zinc-300 leading-relaxed font-mono resize-none focus:outline-none focus:border-white/20 transition-colors" spellcheck="false"></textarea>
             </div>
-            <div id="previewTab" class="hidden bg-white" style="min-height:100%">
+            <!-- Split View Tab -->
+            <div id="splitTab" class="hidden flex-1 overflow-hidden flex flex-col lg:flex-row gap-0">
+              <div class="flex-1 overflow-auto scroll p-4 border-b lg:border-b-0 lg:border-r border-white/5">
+                <textarea id="latexEditorSplit" class="w-full h-full min-h-[300px] lg:min-h-full bg-[#0e0e11] border border-white/10 rounded-lg p-4 text-xs text-zinc-300 leading-relaxed font-mono resize-none focus:outline-none focus:border-white/20 transition-colors" spellcheck="false"></textarea>
+              </div>
+              <div class="flex-1 overflow-auto scroll bg-white">
+                <div id="latexPreviewSplit" class="latex-resume"></div>
+              </div>
+            </div>
+            <!-- Preview Tab -->
+            <div id="previewTab" class="hidden flex-1 overflow-auto scroll bg-white">
               <div id="latexPreview" class="latex-resume"></div>
             </div>
-            <div id="mdTab" class="p-4 hidden">
+            <!-- Markdown Used Tab -->
+            <div id="mdTab" class="p-4 hidden overflow-auto scroll">
               <div id="mdUsedList" class="flex flex-col gap-5"></div>
             </div>
           </div>

@@ -1,0 +1,171 @@
+<div class="flex flex-col gap-5">
+  <!-- Header -->
+  <div class="text-center anim">
+    <h1 class="font-geist text-2xl md:text-3xl font-semibold text-white mb-1.5 tracking-tight">Add to Your Library</h1>
+    <p class="text-sm text-zinc-400">Build your professional profile — add projects, experience, education, skills, and certifications.</p>
+  </div>
+
+  <!-- Add options grid -->
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4 anim anim-d1">
+    
+    <!-- GitHub Project -->
+    <div class="glass rounded-2xl p-6 flex flex-col gap-4">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-lg bg-purple-500/10 border border-purple-500/20 flex items-center justify-center">
+          <iconify-icon icon="solar:code-square-linear" class="text-purple-400" style="font-size:20px"></iconify-icon>
+        </div>
+        <div>
+          <h3 class="font-geist text-base font-semibold text-white">GitHub Project</h3>
+          <p class="text-xs text-zinc-500">Analyze and import from GitHub</p>
+        </div>
+      </div>
+      
+      <div class="flex flex-col gap-3">
+        <input id="repoUrl" type="url" placeholder="https://github.com/owner/repo"
+          class="input input-mono py-2.5 text-sm"
+          onkeydown="if(event.key==='Enter') Add.analyzeRepo()">
+        <button id="analyzeBtn" onclick="Add.analyzeRepo()" class="btn-primary w-full py-2.5 text-sm">
+          <iconify-icon icon="solar:add-circle-linear" style="font-size:14px"></iconify-icon>
+          <span id="analyzeBtnTxt">Analyze & Add</span>
+        </button>
+      </div>
+
+      <!-- Progress -->
+      <div id="repoProgress" class="hidden flex-col gap-1.5">
+        <div class="flex justify-between text-[10px] text-zinc-500">
+          <span id="repoStepTxt">Fetching...</span>
+          <span id="repoStepNum">1 / 4</span>
+        </div>
+        <div class="progress-track">
+          <div id="repoBar" class="progress-fill" style="width:0%"></div>
+        </div>
+      </div>
+      <div id="repoAlert" class="alert hidden"></div>
+    </div>
+
+    <!-- Work Experience -->
+    <div class="glass rounded-2xl p-6 flex flex-col gap-4 cursor-pointer hover:border-white/15 transition-all group"
+         onclick="Add.openModal('experience')">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-lg bg-blue-500/10 border border-blue-500/20 flex items-center justify-center">
+          <iconify-icon icon="solar:case-linear" class="text-blue-400" style="font-size:20px"></iconify-icon>
+        </div>
+        <div>
+          <h3 class="font-geist text-base font-semibold text-white group-hover:text-blue-300 transition-colors">Work Experience</h3>
+          <p class="text-xs text-zinc-500">Add your professional history</p>
+        </div>
+      </div>
+      <p class="text-xs text-zinc-600 leading-relaxed">Job title, company, dates, responsibilities, and achievements</p>
+      <button class="btn-secondary w-full py-2.5 text-sm">
+        <iconify-icon icon="solar:add-circle-linear" style="font-size:14px"></iconify-icon>
+        Add Experience
+      </button>
+    </div>
+
+    <!-- Education -->
+    <div class="glass rounded-2xl p-6 flex flex-col gap-4 cursor-pointer hover:border-white/15 transition-all group"
+         onclick="Add.openModal('education')">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-lg bg-green-500/10 border border-green-500/20 flex items-center justify-center">
+          <iconify-icon icon="solar:book-linear" class="text-green-400" style="font-size:20px"></iconify-icon>
+        </div>
+        <div>
+          <h3 class="font-geist text-base font-semibold text-white group-hover:text-green-300 transition-colors">Education</h3>
+          <p class="text-xs text-zinc-500">Add your academic background</p>
+        </div>
+      </div>
+      <p class="text-xs text-zinc-600 leading-relaxed">Degree, university, GPA, coursework, and honors</p>
+      <button class="btn-secondary w-full py-2.5 text-sm">
+        <iconify-icon icon="solar:add-circle-linear" style="font-size:14px"></iconify-icon>
+        Add Education
+      </button>
+    </div>
+
+    <!-- Skills -->
+    <div class="glass rounded-2xl p-6 flex flex-col gap-4 cursor-pointer hover:border-white/15 transition-all group"
+         onclick="Add.openModal('skill')">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-lg bg-yellow-500/10 border border-yellow-500/20 flex items-center justify-center">
+          <iconify-icon icon="solar:star-linear" class="text-yellow-400" style="font-size:20px"></iconify-icon>
+        </div>
+        <div>
+          <h3 class="font-geist text-base font-semibold text-white group-hover:text-yellow-300 transition-colors">Skills</h3>
+          <p class="text-xs text-zinc-500">Add your technical skills</p>
+        </div>
+      </div>
+      <p class="text-xs text-zinc-600 leading-relaxed">Programming languages, frameworks, tools, and proficiency levels</p>
+      <button class="btn-secondary w-full py-2.5 text-sm">
+        <iconify-icon icon="solar:add-circle-linear" style="font-size:14px"></iconify-icon>
+        Add Skills
+      </button>
+    </div>
+
+    <!-- Certification -->
+    <div class="glass rounded-2xl p-6 flex flex-col gap-4 cursor-pointer hover:border-white/15 transition-all group"
+         onclick="Add.openModal('certification')">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-lg bg-orange-500/10 border border-orange-500/20 flex items-center justify-center">
+          <iconify-icon icon="solar:diploma-linear" class="text-orange-400" style="font-size:20px"></iconify-icon>
+        </div>
+        <div>
+          <h3 class="font-geist text-base font-semibold text-white group-hover:text-orange-300 transition-colors">Certification</h3>
+          <p class="text-xs text-zinc-500">Add professional certifications</p>
+        </div>
+      </div>
+      <p class="text-xs text-zinc-600 leading-relaxed">Certificate name, issuer, credential ID, and verification link</p>
+      <button class="btn-secondary w-full py-2.5 text-sm">
+        <iconify-icon icon="solar:add-circle-linear" style="font-size:14px"></iconify-icon>
+        Add Certification
+      </button>
+    </div>
+
+    <!-- Manual Project -->
+    <div class="glass rounded-2xl p-6 flex flex-col gap-4 cursor-pointer hover:border-white/15 transition-all group"
+         onclick="Add.openModal('project')">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-lg bg-purple-500/10 border border-purple-500/20 flex items-center justify-center">
+          <iconify-icon icon="solar:document-add-linear" class="text-purple-400" style="font-size:20px"></iconify-icon>
+        </div>
+        <div>
+          <h3 class="font-geist text-base font-semibold text-white group-hover:text-purple-300 transition-colors">Manual Project</h3>
+          <p class="text-xs text-zinc-500">Add project without GitHub</p>
+        </div>
+      </div>
+      <p class="text-xs text-zinc-600 leading-relaxed">For non-GitHub projects, side projects, or custom entries</p>
+      <button class="btn-secondary w-full py-2.5 text-sm">
+        <iconify-icon icon="solar:add-circle-linear" style="font-size:14px"></iconify-icon>
+        Add Project
+      </button>
+    </div>
+  </div>
+
+  <!-- Quick tip -->
+  <div class="glass rounded-xl p-4 flex items-start gap-3 anim anim-d2">
+    <iconify-icon icon="solar:lightbulb-linear" class="text-yellow-400 flex-shrink-0" style="font-size:18px"></iconify-icon>
+    <div>
+      <p class="text-xs font-medium text-zinc-300 mb-1">Pro Tip</p>
+      <p class="text-xs text-zinc-500 leading-relaxed">The more detailed your library, the better your AI-generated resumes. Include metrics, achievements, and specific technologies used.</p>
+    </div>
+  </div>
+</div>
+
+<!-- Reuse the same modal from library.html -->
+<div id="addItemModal" class="modal-backdrop hidden">
+  <div class="modal-box wide" onclick="event.stopPropagation()" style="max-height:90vh;overflow-y:auto">
+    <div class="flex items-center justify-between mb-4">
+      <h3 id="modalTitle" class="font-geist text-base font-semibold text-white">Add to Library</h3>
+      <button onclick="Add.closeModal()" class="text-zinc-500 hover:text-white transition-colors">
+        <iconify-icon icon="solar:close-circle-linear" style="font-size:20px"></iconify-icon>
+      </button>
+    </div>
+    
+    <!-- Dynamic fields based on type -->
+    <div id="modalDynamicFields" class="flex flex-col gap-4"></div>
+
+    <div id="modalAlert" class="alert hidden"></div>
+    <div class="flex gap-3 justify-end mt-4">
+      <button onclick="Add.closeModal()" class="btn-secondary">Cancel</button>
+      <button onclick="Add.saveItem()" class="btn-primary">Save to Library</button>
+    </div>
+  </div>
+</div>

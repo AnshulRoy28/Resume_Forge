@@ -2,6 +2,20 @@
 const Settings = (() => {
 
   async function load() {
+    // Load profile data
+    try {
+      const data = await App.api('GET', '/api/auth/me');
+      if (data.user) {
+        document.getElementById('profileName').value = data.user.name || '';
+        document.getElementById('profileEmail').value = data.user.email || '';
+        document.getElementById('profilePhone').value = data.user.phone || '';
+        document.getElementById('profileLinkedIn').value = data.user.linkedin_url || '';
+        document.getElementById('profileGitHub').value = data.user.github_url || '';
+      }
+    } catch (err) {
+      console.error('Failed to load profile:', err);
+    }
+
     // Load API key status from localStorage
     const apiKey = Auth.getApiKey();
     const input = document.getElementById('settingsGeminiKey');
@@ -39,6 +53,44 @@ const Settings = (() => {
       if (st) st.textContent = tmplData.templates?.length ?? 0;
       if (sr) sr.textContent = histData.items?.length ?? 0;
     } catch { /* stats are non-critical */ }
+  }
+
+  async function saveProfile() {
+    const name = document.getElementById('profileName').value.trim();
+    const phone = document.getElementById('profilePhone').value.trim();
+    const linkedin_url = document.getElementById('profileLinkedIn').value.trim();
+    const github_url = document.getElementById('profileGitHub').value.trim();
+    const btn = document.getElementById('saveProfileBtn');
+    const alertDiv = document.getElementById('profileAlert');
+
+    if (!name) {
+      App.showAlert('profileAlert', 'Name is required', 'error');
+      return;
+    }
+
+    btn.disabled = true;
+    btn.textContent = 'Saving...';
+    App.hideAlert('profileAlert');
+
+    try {
+      const data = await App.api('PUT', '/api/auth/profile', {
+        name,
+        phone: phone || null,
+        linkedin_url: linkedin_url || null,
+        github_url: github_url || null
+      });
+
+      // Update localStorage
+      localStorage.setItem('user', JSON.stringify(data.user));
+
+      App.showAlert('profileAlert', '✓ Profile updated successfully', 'success');
+      setTimeout(() => App.hideAlert('profileAlert'), 3000);
+    } catch (err) {
+      App.showAlert('profileAlert', err.message, 'error');
+    } finally {
+      btn.disabled = false;
+      btn.textContent = 'Save Profile';
+    }
   }
 
   function saveApiKey() {
@@ -90,6 +142,6 @@ const Settings = (() => {
   // ── Register ───────────────────────────────────────────────────
   App.register('settings', load);
 
-  return { load, saveApiKey, saveGitHubToken };
+  return { load, saveProfile, saveApiKey, saveGitHubToken };
 })();
 

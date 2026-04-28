@@ -3,67 +3,7 @@ const Generate = (() => {
   let currentLatex = '';
   let currentJobTitle = '';
   let currentCompany = '';
-
-  // ── Repo Analyzer ──────────────────────────────────────────────
-  async function analyzeRepo() {
-    const url = document.getElementById('repoUrl').value.trim();
-    if (!url) return;
-    if (!/github\.com\/[^/]+\/[^/]+/.test(url)) {
-      App.showAlert('repoAlert', 'Please enter a valid GitHub repository URL.', 'error');
-      return;
-    }
-
-    App.hideAlert('repoAlert');
-    _setRepoLoading(true);
-    _showRepoProgress(true);
-
-    const steps = [
-      { txt: 'Fetching repository...', pct: 20, num: '1 / 4' },
-      { txt: 'Analyzing tech stack...', pct: 50, num: '2 / 4' },
-      { txt: 'Writing resume content...', pct: 80, num: '3 / 4' },
-      { txt: 'Saving to library...', pct: 95, num: '4 / 4' },
-    ];
-    let i = 0;
-    const ticker = setInterval(() => {
-      if (i < steps.length) _setRepoStep(steps[i++]);
-    }, 1800);
-
-    try {
-      const data = await App.api('POST', '/api/analyze', { repoUrl: url });
-      clearInterval(ticker);
-      _setRepoStep({ txt: 'Done!', pct: 100, num: '4 / 4' });
-      await App.sleep(400);
-      _showRepoProgress(false);
-      App.showAlert('repoAlert', `✓ "${data.repoName}" added to library`, 'success');
-      document.getElementById('repoUrl').value = '';
-    } catch (err) {
-      clearInterval(ticker);
-      _showRepoProgress(false);
-      App.showAlert('repoAlert', err.message, 'error');
-    } finally {
-      _setRepoLoading(false);
-    }
-  }
-
-  function _setRepoLoading(on) {
-    const btn = document.getElementById('analyzeBtn');
-    if (!btn) return;
-    btn.disabled = on;
-    document.getElementById('analyzeBtnTxt').textContent = on ? 'Analyzing...' : 'Analyze';
-  }
-
-  function _showRepoProgress(on) {
-    document.getElementById('repoProgress')?.classList.toggle('hidden', !on);
-  }
-
-  function _setRepoStep({ txt, pct, num }) {
-    const t = document.getElementById('repoStepTxt');
-    const n = document.getElementById('repoStepNum');
-    const b = document.getElementById('repoBar');
-    if (t) t.textContent = txt;
-    if (n) n.textContent = num;
-    if (b) b.style.width = pct + '%';
-  }
+  let autoUpdateTimer = null;
 
   // ── JD helpers ─────────────────────────────────────────────────
   function updateCharCount() {
@@ -83,6 +23,82 @@ const Generate = (() => {
     reader.readAsText(file);
   }
 
+  // ── Editor sync ────────────────────────────────────────────────
+  function syncEditors() {
+    const editor = document.getElementById('latexEditor');
+    const editorSplit = document.getElementById('latexEditorSplit');
+    if (editor && editorSplit) {
+      // Sync from main editor to split editor
+      if (document.activeElement === editor) {
+        editorSplit.value = editor.value;
+        currentLatex = editor.value;
+      }
+      // Sync from split editor to main editor
+      else if (document.activeElement === editorSplit) {
+        editor.value = editorSplit.value;
+        currentLatex = editorSplit.value;
+      }
+    }
+  }
+
+  function setupEditorSync() {
+    const editor = document.getElementById('latexEditor');
+    const editorSplit = document.getElementById('latexEditorSplit');
+    
+    if (editor) {
+      editor.addEventListener('input', () => {
+        syncEditors();
+        scheduleAutoUpdate();
+      });
+    }
+    
+    if (editorSplit) {
+      editorSplit.addEventListener('input', () => {
+        syncEditors();
+        updatePreviewSplit();
+      });
+    }
+  }
+
+  function scheduleAutoUpdate() {
+    // Clear existing timer
+    if (autoUpdateTimer) clearTimeout(autoUpdateTimer);
+    
+    // Schedule update after 1 second of no typing
+    autoUpdateTimer = setTimeout(() => {
+      const currentTab = document.querySelector('[data-tab].active')?.dataset.tab;
+      if (currentTab === 'split') {
+        updatePreviewSplit();
+      }
+    }, 1000);
+  }
+
+  function updatePreviewSplit() {
+    const editorSplit = document.getElementById('latexEditorSplit');
+    const previewSplit = document.getElementById('latexPreviewSplit');
+    if (editorSplit && previewSplit) {
+      try {
+        LatexPreview.render(editorSplit.value, previewSplit);
+      } catch (err) {
+        console.error('Preview error:', err);
+      }
+    }
+  }
+
+  function updatePreview() {
+    const editor = document.getElementById('latexEditor');
+    const preview = document.getElementById('latexPreview');
+    if (editor && preview) {
+      currentLatex = editor.value;
+      try {
+        LatexPreview.render(currentLatex, preview);
+      } catch (err) {
+        console.error('Preview error:', err);
+        App.showAlert('genAlert', 'Preview error: ' + err.message, 'error');
+      }
+    }
+  }
+
   // ── Generate Resume ────────────────────────────────────────────
   async function run() {
     const jd = document.getElementById('jobDescription')?.value.trim();
@@ -98,46 +114,62 @@ const Generate = (() => {
     _showOutput(false);
 
     const steps = [
-      { txt: 'Parsing job description...', pct: 15, num: '1 / 5' },
-      { txt: 'Scoring your library...',    pct: 35, num: '2 / 5' },
-      { txt: 'Selecting best matches...',  pct: 55, num: '3 / 5' },
-      { txt: 'Tailoring content with AI...', pct: 80, num: '4 / 5' },
-      { txt: 'Finalizing resume...',       pct: 95, num: '5 / 5' },
+      { txt: 'Parsing job description...', pct: 10, num: '1 / 8' },
+      { txt: 'Scoring projects...', pct: 20, num: '2 / 8' },
+      { txt: 'Scoring experiences...', pct: 30, num: '3 / 8' },
+      { txt: 'Generating projects section...', pct: 45, num: '4 / 8' },
+      { txt: 'Generating experience section...', pct: 60, num: '5 / 8' },
+      { txt: 'Generating skills section...', pct: 75, num: '6 / 8' },
+      { txt: 'Integrating final resume...', pct: 85, num: '7 / 8' },
+      { txt: 'Verifying accuracy...', pct: 95, num: '8 / 8' },
     ];
     let si = 0;
     const ticker = setInterval(() => {
       if (si < steps.length) _setGenStep(steps[si++]);
-    }, 2500);
+    }, 3000);
 
     try {
       // Score library
       const scoreData = await App.api('POST', '/api/score', { jobDescription: jd });
-      const maxProjects = parseInt(App.getSetting('maxProjects', 3));
-      const topScores = (scoreData.scores || []).slice(0, maxProjects);
-      const markdownIds = topScores.map(s => s.id).filter(Boolean);
+      const topScores = (scoreData.scores || []).slice(0, 10);
 
       _renderSources(topScores);
 
-      // Generate
+      // Generate (uses all library items, scoring happens server-side)
       const genData = await App.api('POST', '/api/generate', {
         jobDescription: jd,
         jobTitle: currentJobTitle,
-        company: currentCompany,
-        markdownIds,
+        company: currentCompany
       });
 
       clearInterval(ticker);
-      _setGenStep({ txt: 'Done!', pct: 100, num: '5 / 5' });
+      _setGenStep({ txt: 'Done!', pct: 100, num: '8 / 8' });
       await App.sleep(500);
 
       currentLatex = genData.latex;
-      document.getElementById('latexOut').textContent = genData.latex;
-      document.getElementById('mdCount').textContent = markdownIds.length;
-      _renderMarkdownUsed(markdownIds);
+      
+      // Set editor content
+      const editor = document.getElementById('latexEditor');
+      const editorSplit = document.getElementById('latexEditorSplit');
+      if (editor) editor.value = genData.latex;
+      if (editorSplit) editorSplit.value = genData.latex;
+      
+      // Show top scored items count
+      const itemCount = topScores.length;
+      document.getElementById('mdCount').textContent = itemCount;
+      
+      // Show which items were considered
+      const topIds = topScores.map(s => s.id);
+      _renderMarkdownUsed(topIds);
 
       _showGenProgress(false);
       _showOutput(true);
-      switchTab('latex');
+      
+      // Setup editor sync after content is loaded
+      setupEditorSync();
+      
+      // Switch to editor tab by default
+      switchTab('editor');
 
     } catch (err) {
       clearInterval(ticker);
@@ -217,43 +249,82 @@ const Generate = (() => {
 
   // ── Output actions ─────────────────────────────────────────────
   function switchTab(tab) {
+    // Update tab buttons
     document.querySelectorAll('[data-tab]').forEach(t => t.classList.toggle('active', t.dataset.tab === tab));
-    document.getElementById('latexTab')?.classList.toggle('hidden', tab !== 'latex');
-    document.getElementById('previewTab')?.classList.toggle('hidden', tab !== 'preview');
-    document.getElementById('mdTab')?.classList.toggle('hidden', tab !== 'md');
-
-    const dlHtml = document.getElementById('dlHtmlBtn');
-    if (dlHtml) dlHtml.classList.toggle('hidden', tab !== 'preview');
-
-    if (tab === 'preview' && currentLatex) {
+    
+    // Hide all tabs
+    document.getElementById('editorTab')?.classList.add('hidden');
+    document.getElementById('splitTab')?.classList.add('hidden');
+    document.getElementById('previewTab')?.classList.add('hidden');
+    document.getElementById('mdTab')?.classList.add('hidden');
+    
+    // Show selected tab
+    if (tab === 'editor') {
+      document.getElementById('editorTab')?.classList.remove('hidden');
+      document.getElementById('updatePreviewBtn')?.classList.add('hidden');
+    } else if (tab === 'split') {
+      document.getElementById('splitTab')?.classList.remove('hidden');
+      document.getElementById('updatePreviewBtn')?.classList.add('hidden');
+      // Sync editors and update preview
+      syncEditors();
+      updatePreviewSplit();
+    } else if (tab === 'preview') {
+      document.getElementById('previewTab')?.classList.remove('hidden');
+      document.getElementById('updatePreviewBtn')?.classList.remove('hidden');
+      // Update preview with current editor content
+      const editor = document.getElementById('latexEditor');
+      if (editor) currentLatex = editor.value;
       const container = document.getElementById('latexPreview');
-      if (container) LatexPreview.render(currentLatex, container);
+      if (container && currentLatex) {
+        try {
+          LatexPreview.render(currentLatex, container);
+        } catch (err) {
+          console.error('Preview error:', err);
+        }
+      }
+    } else if (tab === 'md') {
+      document.getElementById('mdTab')?.classList.remove('hidden');
+      document.getElementById('updatePreviewBtn')?.classList.add('hidden');
     }
+
+    // Show/hide download HTML button
+    const dlHtml = document.getElementById('dlHtmlBtn');
+    if (dlHtml) dlHtml.classList.toggle('hidden', tab !== 'preview' && tab !== 'split');
   }
 
   function copyLatex() {
-    if (!currentLatex) return;
-    App.copyText(currentLatex, document.getElementById('copyLatexBtn'));
+    const editor = document.getElementById('latexEditor');
+    if (!editor || !editor.value) return;
+    App.copyText(editor.value, document.getElementById('copyLatexBtn'));
   }
 
   function downloadLatex() {
-    if (!currentLatex) return;
-    const name = [currentJobTitle, currentCompany].filter(Boolean).join('_').replace(/\s+/g, '_').toLowerCase() || 'resume';
-    App.downloadFile(currentLatex, name + '.tex');
+    const editor = document.getElementById('latexEditor');
+    if (!editor || !editor.value) return;
+    // ATS Metadata Hack: FirstName_LastName_JobTitle_Year.tex format
+    const year = new Date().getFullYear();
+    const jobTitle = currentJobTitle || 'Resume';
+    const name = `Resume_${jobTitle}_${year}`.replace(/\s+/g, '_');
+    App.downloadFile(editor.value, name + '.tex');
   }
 
   function downloadHtml() {
-    if (!currentLatex) return;
+    const editor = document.getElementById('latexEditor');
+    if (!editor || !editor.value) return;
+    // ATS Metadata Hack: FirstName_LastName_JobTitle_Year.html format
+    const year = new Date().getFullYear();
+    const jobTitle = currentJobTitle || 'Resume';
     const title = [currentJobTitle, currentCompany].filter(Boolean).join(' @ ') || 'Resume';
-    const name  = title.replace(/\s+/g, '_').toLowerCase();
-    const html  = LatexPreview.buildHtml(currentLatex, title);
+    const name = `Resume_${jobTitle}_${year}`.replace(/\s+/g, '_');
+    const html = LatexPreview.buildHtml(editor.value, title);
     App.downloadFile(html, name + '.html');
   }
 
   // ── Register ───────────────────────────────────────────────────
   App.register('generate', () => {
-    // nothing async needed on init
+    // Setup editor sync when page loads
+    setupEditorSync();
   });
 
-  return { analyzeRepo, updateCharCount, loadJDFile, run, switchTab, copyLatex, downloadLatex, downloadHtml };
+  return { updateCharCount, loadJDFile, run, switchTab, copyLatex, downloadLatex, downloadHtml, updatePreview };
 })();
