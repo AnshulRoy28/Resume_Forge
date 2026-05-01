@@ -24,6 +24,23 @@
         <input id="repoUrl" type="url" placeholder="https://github.com/owner/repo"
           class="input input-mono py-2.5 text-sm"
           onkeydown="if(event.key==='Enter') Add.analyzeRepo()">
+        
+        <!-- GitHub Token Field (Optional) -->
+        <details class="text-xs text-zinc-500">
+          <summary class="cursor-pointer hover:text-zinc-300 transition-colors">
+            <iconify-icon icon="solar:key-linear" style="font-size:12px"></iconify-icon>
+            Optional: GitHub Token (for private repos or rate limits)
+          </summary>
+          <div class="mt-2 flex flex-col gap-2">
+            <input id="githubToken" type="password" placeholder="github_pat_..."
+              class="input input-mono py-2 text-xs"
+              onkeydown="if(event.key==='Enter') Add.analyzeRepo()">
+            <p class="text-[10px] text-zinc-600">
+              Get a free token at <a href="https://github.com/settings/tokens" target="_blank" class="text-purple-400 hover:underline">github.com/settings/tokens</a>
+            </p>
+          </div>
+        </details>
+        
         <button id="analyzeBtn" onclick="Add.analyzeRepo()" class="btn-primary w-full py-2.5 text-sm">
           <iconify-icon icon="solar:add-circle-linear" style="font-size:14px"></iconify-icon>
           <span id="analyzeBtnTxt">Analyze & Add</span>

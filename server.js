@@ -288,6 +288,18 @@ async function ghFetch(endpoint, token) {
   const headers = { 'Accept': 'application/vnd.github+json', 'User-Agent': 'ResumeForge' };
   if (token) headers['Authorization'] = `Bearer ${token}`;
   const res = await fetch(`https://api.github.com${endpoint}`, { headers });
+  
+  // Handle rate limiting
+  if (res.status === 403) {
+    const rateLimitRemaining = res.headers.get('x-ratelimit-remaining');
+    const rateLimitReset = res.headers.get('x-ratelimit-reset');
+    
+    if (rateLimitRemaining === '0') {
+      const resetDate = new Date(parseInt(rateLimitReset) * 1000);
+      throw new Error(`GitHub API rate limit exceeded. Resets at ${resetDate.toLocaleTimeString()}. Please provide your own GitHub token in the form, or wait until the rate limit resets.`);
+    }
+  }
+  
   if (!res.ok) throw new Error(`GitHub API error: ${res.status} ${res.statusText}`);
   return res.json();
 }
@@ -927,7 +939,10 @@ app.post('/api/analyze', authenticateToken, async (req, res) => {
 
     const ai = getUserAI(req);
     const { owner, repo } = parseGitHubUrl(repoUrl);
-    const token = githubToken || process.env.GITHUB_TOKEN || null;
+    
+    // Only use user-provided token or server token if explicitly set
+    // Don't use server token by default to avoid rate limits
+    const token = githubToken || (process.env.GITHUB_TOKEN && process.env.GITHUB_TOKEN !== '' ? process.env.GITHUB_TOKEN : null);
 
     const repoData = await getRepoData(owner, repo, token);
     const markdown = await generateRepoSummary(repoData, ai);
@@ -947,6 +962,15 @@ app.post('/api/analyze', authenticateToken, async (req, res) => {
     res.json({ markdown, repoName: repoData.meta.full_name, savedId: result.lastInsertRowid, tags });
   } catch (err) {
     console.error(err);
+    
+    // Provide helpful error message for rate limiting
+    if (err.message.includes('rate limit')) {
+      return res.status(429).json({ 
+        error: err.message,
+        suggestion: 'Get a free GitHub token at https://github.com/settings/tokens and paste it in the GitHub Token field below.'
+      });
+    }
+    
     res.status(500).json({ error: err.message });
   }
 });

@@ -15,6 +15,9 @@ services:
         sync: false
       - key: PORT
         value: 3000
+      # GitHub token is optional - users should provide their own to avoid rate limits
+      # - key: GITHUB_TOKEN
+      #   value: your_token_here
     healthCheckPath: /
     disk:
       name: resumeforge-data

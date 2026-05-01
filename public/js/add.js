@@ -5,6 +5,8 @@ const Add = (() => {
   // ── GitHub Repo Analyzer ───────────────────────────────────────
   async function analyzeRepo() {
     const url = document.getElementById('repoUrl').value.trim();
+    const githubToken = document.getElementById('githubToken')?.value.trim() || '';
+    
     if (!url) return;
     if (!/github\.com\/[^/]+\/[^/]+/.test(url)) {
       App.showAlert('repoAlert', 'Please enter a valid GitHub repository URL.', 'error');
@@ -27,17 +29,30 @@ const Add = (() => {
     }, 1800);
 
     try {
-      const data = await App.api('POST', '/api/analyze', { repoUrl: url });
+      const payload = { repoUrl: url };
+      if (githubToken) payload.githubToken = githubToken;
+      
+      const data = await App.api('POST', '/api/analyze', payload);
       clearInterval(ticker);
       _setRepoStep({ txt: 'Done!', pct: 100, num: '4 / 4' });
       await App.sleep(400);
       _showRepoProgress(false);
       App.showAlert('repoAlert', `✓ "${data.repoName}" added to library`, 'success');
       document.getElementById('repoUrl').value = '';
+      if (document.getElementById('githubToken')) {
+        document.getElementById('githubToken').value = '';
+      }
     } catch (err) {
       clearInterval(ticker);
       _showRepoProgress(false);
-      App.showAlert('repoAlert', err.message, 'error');
+      
+      // Show helpful message for rate limit errors
+      let errorMsg = err.message;
+      if (err.message.includes('rate limit')) {
+        errorMsg += ' Please provide a GitHub token above to continue.';
+      }
+      
+      App.showAlert('repoAlert', errorMsg, 'error');
     } finally {
       _setRepoLoading(false);
     }

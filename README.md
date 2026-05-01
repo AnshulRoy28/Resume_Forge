@@ -39,47 +39,23 @@ See [ATS_OPTIMIZATION_GUIDE.md](./docs/ATS_OPTIMIZATION_GUIDE.md) for complete d
 
 ## 🚀 Quick Start
 
-### Option 1: Docker (Recommended) 🐳
+**See [QUICK_START.md](QUICK_START.md) for detailed instructions.**
+
+### Docker (Local)
 
 ```bash
-# Clone the repository
-git clone https://github.com/AnshulRoy28/Resume_Forge.git
-cd Resume_Forge
-
-# Run with Docker (one command!)
-# Linux/Mac:
-chmod +x docker-start.sh
-./docker-start.sh
-
-# Windows:
+# Windows
 docker-start.bat
+
+# Linux/Mac
+./docker-start.sh
 ```
 
-See [README_DOCKER.md](./README_DOCKER.md) for complete Docker documentation.
+### Deploy to Render (Production)
 
-### Option 2: Local Installation
+[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/AnshulRoy28/Resume_Forge)
 
-**Prerequisites:**
-- Node.js 16+
-- npm or yarn
-- Free Gemini API key from [Google AI Studio](https://aistudio.google.com/apikey)
-
-```bash
-# Clone the repository
-git clone https://github.com/AnshulRoy28/Resume_Forge.git
-cd Resume_Forge
-
-# Install dependencies
-npm install
-
-# Create database
-npm run reset-db
-
-# Start the server
-npm start
-```
-
-Visit `http://localhost:3000` and create your account!
+Click button → Sign in → Deploy → Done in 5 minutes!
 
 ## 🔑 Getting Your API Key
 
@@ -157,29 +133,16 @@ See [VERIFICATION_SYSTEM.md](./docs/VERIFICATION_SYSTEM.md) for complete technic
 ### Docker (Recommended) 🐳
 
 ```bash
-# Production deployment with Docker
 docker-compose up -d
-
-# Or use the quick start script
-./docker-start.sh
 ```
 
-See [README_DOCKER.md](./README_DOCKER.md) and [docs/DOCKER_GUIDE.md](./docs/DOCKER_GUIDE.md) for complete Docker documentation.
+See [QUICK_START.md](QUICK_START.md) for detailed instructions.
 
 ### Deploy to Render (Free)
 
-1. Fork this repository
-2. Create account on [Render](https://render.com)
-3. Create new Web Service → Connect your GitHub repo
-4. Add environment variable: `JWT_SECRET` (generate with command below)
-5. Deploy!
+[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/AnshulRoy28/Resume_Forge)
 
-**Generate JWT Secret:**
-```bash
-node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
-```
-
-See [DEPLOYMENT_GUIDE.md](./docs/DEPLOYMENT_GUIDE.md) for detailed instructions.
+One-click deployment to production. See [docs/DEPLOYMENT_GUIDE.md](docs/DEPLOYMENT_GUIDE.md) for details.
 
 ### Other Platforms
 - Docker (any cloud provider)
@@ -187,7 +150,6 @@ See [DEPLOYMENT_GUIDE.md](./docs/DEPLOYMENT_GUIDE.md) for detailed instructions.
 - Heroku  
 - Vercel
 - AWS ECS / Google Cloud Run / Azure Container Instances
-- Any Node.js hosting
 
 ## 🔧 Configuration
 
@@ -216,19 +178,23 @@ NODE_ENV=production
 
 ## 📚 Documentation
 
-- [🐳 Docker Success Guide](./DOCKER_SUCCESS.md) - **Your app is running!**
-- [🐳 Docker Quick Reference](./DOCKER_QUICK_REFERENCE.md) - Common commands
-- [Docker Quick Start](./README_DOCKER.md) - Run with Docker in one command
-- [Docker Guide](./docs/DOCKER_GUIDE.md) - Complete Docker documentation
-- [LaTeX Editor Guide](./docs/LATEX_EDITOR_GUIDE.md) - Complete editor documentation
-- [Verification System](./docs/VERIFICATION_SYSTEM.md) - Three-stage generation with fact-checking
-- [Verification Quick Reference](./docs/VERIFICATION_QUICK_REFERENCE.md) - Developer guide for verification
-- [Verification Status](./docs/VERIFICATION_IMPLEMENTATION_STATUS.md) - Implementation details
-- [ATS Optimization Guide](./docs/ATS_OPTIMIZATION_GUIDE.md) - Complete 2026 ATS strategies
-- [Deployment Guide](./docs/DEPLOYMENT_GUIDE.md) - Complete deployment instructions
-- [How to Get API Key](./docs/HOW_TO_GET_API_KEY.md) - Step-by-step API key guide
-- [Library Types Guide](./docs/LIBRARY_TYPES.md) - Understanding different item types
-- [Adding Items Guide](./docs/ADDING_ITEMS_GUIDE.md) - How to add projects, experiences, etc.
+### Quick Guides
+- **[QUICK_START.md](QUICK_START.md)** - Get started in 5 minutes
+- **[DOCKER_QUICK_REFERENCE.md](DOCKER_QUICK_REFERENCE.md)** - Docker commands cheat sheet
+- **[GITHUB_RATE_LIMIT_FIX.md](GITHUB_RATE_LIMIT_FIX.md)** - Fix GitHub API rate limits
+
+### Complete Guides
+- **[docs/DOCKER_GUIDE.md](docs/DOCKER_GUIDE.md)** - Complete Docker documentation
+- **[docs/DOCKER_ARCHITECTURE.md](docs/DOCKER_ARCHITECTURE.md)** - Architecture diagrams
+- **[docs/DEPLOYMENT_GUIDE.md](docs/DEPLOYMENT_GUIDE.md)** - All deployment options
+- **[docs/LATEX_EDITOR_GUIDE.md](docs/LATEX_EDITOR_GUIDE.md)** - LaTeX editor documentation
+- **[docs/VERIFICATION_SYSTEM.md](docs/VERIFICATION_SYSTEM.md)** - AI verification system
+- **[docs/ATS_OPTIMIZATION_GUIDE.md](docs/ATS_OPTIMIZATION_GUIDE.md)** - 2026 ATS strategies
+
+### Feature Guides
+- **[docs/HOW_TO_GET_API_KEY.md](docs/HOW_TO_GET_API_KEY.md)** - Get Gemini API key
+- **[docs/LIBRARY_TYPES.md](docs/LIBRARY_TYPES.md)** - Understanding item types
+- **[docs/ADDING_ITEMS_GUIDE.md](docs/ADDING_ITEMS_GUIDE.md)** - Add projects & experiences
 
 ## 📁 Project Structure
 
