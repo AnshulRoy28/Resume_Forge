@@ -39,7 +39,11 @@ if (!JWT_SECRET || JWT_SECRET.length < 32) {
 
 // ── Database Setup ──────────────────────────────────────────────
 
-const db = new Database('resumeforge.db');
+// Support Docker volume mounting
+const dbPath = process.env.DB_PATH || (fs.existsSync('/app/data') ? '/app/data/resumeforge.db' : 'resumeforge.db');
+console.log(`📁 Using database at: ${dbPath}`);
+
+const db = new Database(dbPath);
 
 db.exec(`
   CREATE TABLE IF NOT EXISTS users (

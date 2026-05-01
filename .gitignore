@@ -6,6 +6,9 @@ node_modules/
 .env.local
 .env.production
 
+# Keep example file
+!.env.example
+
 # Database
 *.db
 *.db-journal

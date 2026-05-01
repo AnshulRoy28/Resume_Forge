@@ -1,8 +1,13 @@
 import { createRequire } from 'module';
 import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
 const require = createRequire(import.meta.url);
 const Database = require('better-sqlite3');
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 console.log('🔄 Resetting database to new schema...\n');
 
@@ -73,7 +78,8 @@ db.exec(`
 `);
 
 // Seed Jake's template
-const jakeTemplate = fs.readFileSync('../templates/jake_resume.md', 'utf-8');
+const templatePath = path.join(__dirname, '..', 'templates', 'jake_resume.md');
+const jakeTemplate = fs.readFileSync(templatePath, 'utf-8');
 db.prepare(`INSERT INTO templates (name, description, content, is_default, is_global, user_id) VALUES (?, ?, ?, 1, 1, NULL)`)
   .run("Jake's Resume Template", "Classic single-page LaTeX resume template by Jake Gutierrez", jakeTemplate);
 

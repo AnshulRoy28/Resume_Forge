@@ -1,0 +1,35 @@
+services:
+  resumeforge:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: resumeforge-app
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - JWT_SECRET=${JWT_SECRET}
+      - GITHUB_TOKEN=${GITHUB_TOKEN:-}
+    volumes:
+      # Persist database
+      - resumeforge-data:/app/data
+      # Mount database to data directory
+      - ./resumeforge.db:/app/data/resumeforge.db
+    networks:
+      - resumeforge-network
+    healthcheck:
+      test: ["CMD", "node", "-e", "require('http').get('http://localhost:3000/api/auth/me', (r) => {process.exit(r.statusCode === 401 ? 0 : 1)})"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+      start_period: 10s
+
+volumes:
+  resumeforge-data:
+    driver: local
+
+networks:
+  resumeforge-network:
+    driver: bridge

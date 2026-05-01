@@ -4,7 +4,8 @@ services:
     name: resumeforge
     env: node
     plan: free
-    buildCommand: npm install
+    region: oregon
+    buildCommand: npm install && npm run reset-db
     startCommand: npm start
     envVars:
       - key: NODE_ENV
@@ -12,4 +13,10 @@ services:
       - key: JWT_SECRET
         generateValue: true
         sync: false
+      - key: PORT
+        value: 3000
     healthCheckPath: /
+    disk:
+      name: resumeforge-data
+      mountPath: /app/data
+      sizeGB: 1

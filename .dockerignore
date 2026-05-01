@@ -1,0 +1,54 @@
+# Node modules
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# Keep example file
+!.env.example
+
+# Git
+.git/
+.gitignore
+.gitattributes
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Documentation
+*.md
+!README.md
+docs/
+
+# CI/CD
+.github/
+.gitlab-ci.yml
+
+# Database (will be created in container)
+*.db
+*.db-shm
+*.db-wal
+
+# Deployment configs
+render.yaml
+vercel.json
+Procfile
+
+# Scripts (except migration scripts)
+scripts/deploy.sh
+
+# Logs
+logs/
+*.log

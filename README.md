@@ -35,13 +35,30 @@ See [ATS_OPTIMIZATION_GUIDE.md](./docs/ATS_OPTIMIZATION_GUIDE.md) for complete d
 
 ## 🚀 Quick Start
 
-### Prerequisites
+### Option 1: Docker (Recommended) 🐳
 
+```bash
+# Clone the repository
+git clone https://github.com/AnshulRoy28/Resume_Forge.git
+cd Resume_Forge
+
+# Run with Docker (one command!)
+# Linux/Mac:
+chmod +x docker-start.sh
+./docker-start.sh
+
+# Windows:
+docker-start.bat
+```
+
+See [README_DOCKER.md](./README_DOCKER.md) for complete Docker documentation.
+
+### Option 2: Local Installation
+
+**Prerequisites:**
 - Node.js 16+
 - npm or yarn
 - Free Gemini API key from [Google AI Studio](https://aistudio.google.com/apikey)
-
-### Installation
 
 ```bash
 # Clone the repository
@@ -133,7 +150,19 @@ See [VERIFICATION_SYSTEM.md](./docs/VERIFICATION_SYSTEM.md) for complete technic
 
 ## 🚀 Deployment
 
-### Deploy to Render (Recommended - Free)
+### Docker (Recommended) 🐳
+
+```bash
+# Production deployment with Docker
+docker-compose up -d
+
+# Or use the quick start script
+./docker-start.sh
+```
+
+See [README_DOCKER.md](./README_DOCKER.md) and [docs/DOCKER_GUIDE.md](./docs/DOCKER_GUIDE.md) for complete Docker documentation.
+
+### Deploy to Render (Free)
 
 1. Fork this repository
 2. Create account on [Render](https://render.com)
@@ -146,12 +175,14 @@ See [VERIFICATION_SYSTEM.md](./docs/VERIFICATION_SYSTEM.md) for complete technic
 node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
 ```
 
-See [DEPLOYMENT_GUIDE.md](./DEPLOYMENT_GUIDE.md) for detailed instructions.
+See [DEPLOYMENT_GUIDE.md](./docs/DEPLOYMENT_GUIDE.md) for detailed instructions.
 
 ### Other Platforms
+- Docker (any cloud provider)
 - Railway
 - Heroku  
 - Vercel
+- AWS ECS / Google Cloud Run / Azure Container Instances
 - Any Node.js hosting
 
 ## 🔧 Configuration
@@ -181,6 +212,10 @@ NODE_ENV=production
 
 ## 📚 Documentation
 
+- [🐳 Docker Success Guide](./DOCKER_SUCCESS.md) - **Your app is running!**
+- [🐳 Docker Quick Reference](./DOCKER_QUICK_REFERENCE.md) - Common commands
+- [Docker Quick Start](./README_DOCKER.md) - Run with Docker in one command
+- [Docker Guide](./docs/DOCKER_GUIDE.md) - Complete Docker documentation
 - [LaTeX Editor Guide](./docs/LATEX_EDITOR_GUIDE.md) - Complete editor documentation
 - [Verification System](./docs/VERIFICATION_SYSTEM.md) - Three-stage generation with fact-checking
 - [Verification Quick Reference](./docs/VERIFICATION_QUICK_REFERENCE.md) - Developer guide for verification

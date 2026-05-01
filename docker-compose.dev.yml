@@ -1,0 +1,31 @@
+services:
+  resumeforge-dev:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    container_name: resumeforge-dev
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=development
+      - PORT=3000
+      - JWT_SECRET=${JWT_SECRET}
+      - GITHUB_TOKEN=${GITHUB_TOKEN:-}
+    volumes:
+      # Mount source code for hot reload
+      - .:/app
+      - /app/node_modules
+      # Persist database
+      - resumeforge-dev-data:/app/data
+    networks:
+      - resumeforge-dev-network
+    command: npm run dev
+
+volumes:
+  resumeforge-dev-data:
+    driver: local
+
+networks:
+  resumeforge-dev-network:
+    driver: bridge
