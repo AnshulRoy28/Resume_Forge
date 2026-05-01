@@ -107,16 +107,19 @@ docker-compose up -d
 - **Database resets:** Ensure disk is mounted at `/app/data`
 - **GitHub rate limit:** Provide your own token in the UI
 
-### GitHub Rate Limits
-- **Error:** "GitHub API rate limit exceeded"
-- **Solution:** Get free token at https://github.com/settings/tokens
-- **Usage:** Paste in "Optional: GitHub Token" field when analyzing repos
+### Common Errors
+- **FOREIGN KEY constraint failed:** Run `npm run fix-foreign-keys` or `npm run reset-db`
+- **GitHub rate limit exceeded:** Get token at https://github.com/settings/tokens
+- **Gemini API key required:** Add key in Settings page
+
+**See [TROUBLESHOOTING.md](TROUBLESHOOTING.md) for complete troubleshooting guide.**
 
 ---
 
 ## 📚 Documentation
 
 - **[README.md](README.md)** - Full application documentation
+- **[TROUBLESHOOTING.md](TROUBLESHOOTING.md)** - Complete troubleshooting guide
 - **[docs/DEPLOYMENT_GUIDE.md](docs/DEPLOYMENT_GUIDE.md)** - All deployment options
 - **[docs/DOCKER_GUIDE.md](docs/DOCKER_GUIDE.md)** - Complete Docker guide
 
