@@ -2,7 +2,11 @@
 
 AI-powered resume generation platform that analyzes your GitHub repositories and creates tailored resumes for specific job applications.
 
-[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy)
+[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/AnshulRoy28/Resume_Forge)
+
+**🎉 Ready to deploy? Click the button above to deploy in 5 minutes!**
+
+See [DEPLOY_INSTRUCTIONS.md](./DEPLOY_INSTRUCTIONS.md) for step-by-step guide.
 
 ## ✨ Features
 
