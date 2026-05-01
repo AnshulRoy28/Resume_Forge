@@ -77,6 +77,9 @@ db.exec(`
   CREATE INDEX IF NOT EXISTS idx_history_user ON history(user_id);
 `);
 
+// Enable foreign key constraints (allows NULL in foreign key columns)
+db.pragma('foreign_keys = ON');
+
 // Seed Jake's template
 const templatePath = path.join(__dirname, '..', 'templates', 'jake_resume.md');
 const jakeTemplate = fs.readFileSync(templatePath, 'utf-8');

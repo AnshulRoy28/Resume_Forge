@@ -107,6 +107,9 @@ db.exec(`
   CREATE INDEX IF NOT EXISTS idx_history_user ON history(user_id);
 `);
 
+// Enable foreign key constraints but allow NULL for global templates
+db.pragma('foreign_keys = ON');
+
 // Seed Jake's template if no templates exist
 const templateCount = db.prepare('SELECT COUNT(*) as c FROM templates').get();
 if (templateCount.c === 0) {
